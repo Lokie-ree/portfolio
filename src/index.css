@@ -1,0 +1,72 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300;1,9..144,400&family=DM+Sans:wght@300;400;500&display=swap');
+
+@import "tailwindcss";
+
+@theme {
+  --font-display: 'Fraunces', serif;
+  --font-body: 'DM Sans', sans-serif;
+
+  --color-ground:       oklch(12% 0.015 75);
+  --color-surface:      oklch(17% 0.018 75);
+  --color-surface-hi:   oklch(22% 0.018 75);
+  --color-ink:          oklch(92% 0.010 80);
+  --color-muted:        oklch(55% 0.012 75);
+  --color-rule:         oklch(28% 0.014 75);
+  --color-amber:        oklch(72% 0.16 78);
+  --color-amber-dim:    oklch(55% 0.12 78);
+  --color-amber-glow:   oklch(72% 0.16 78 / 0.15);
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-ground text-ink font-body font-normal antialiased;
+    line-height: 1.6;
+  }
+}
+
+/* GSAP scroll reveal initial state — keep out of @apply where transforms must match hook (y: 40) */
+@layer components {
+  .reveal-target {
+    @apply opacity-0 translate-y-10;
+  }
+
+  .module-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      ellipse 80% 80% at 50% 50%,
+      oklch(72% 0.16 78 / 0.08) 0%,
+      transparent 60%
+    );
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .module-card:hover::after {
+    opacity: 1;
+  }
+
+  .hero-glow {
+    @apply pointer-events-none absolute inset-0 z-0;
+    background: radial-gradient(
+      ellipse 60% 40% at 30% 60%,
+      oklch(72% 0.16 78 / 0.06) 0%,
+      transparent 70%
+    );
+  }
+}
