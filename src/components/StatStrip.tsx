@@ -3,7 +3,7 @@ import { useCountUp } from '@/hooks/useCountUp'
 type Stat = { value: number; label: string; prefix?: string }
 
 const STATS: Stat[] = [
-  { value: 2,   label: 'Modules complete' },
+  { value: 3,   label: 'Modules in the sequence' },
   { value: 14,  label: 'Rounds in M2 alone' },
   { value: 4,   label: 'Phases per module' },
   { value: 150, label: 'Student sessions logged', prefix: '~' },
@@ -12,14 +12,14 @@ const STATS: Stat[] = [
 function StatCell({ value: target, label, prefix }: Stat) {
   const { value, ref } = useCountUp<HTMLSpanElement>(target)
   return (
-    <div className="bg-surface p-6 flex flex-col items-center gap-2">
+    <div className="bg-surface px-4 py-7 flex flex-col items-center gap-[6px]">
       <span
         ref={ref}
-        className="font-display text-[clamp(36px,6vw,52px)] font-light italic text-amber"
+        className="font-display text-[clamp(48px,8vw,64px)] font-light italic leading-none text-amber"
       >
         {prefix ?? ''}{value}
       </span>
-      <span className="text-[12px] font-medium uppercase tracking-[0.12em] text-muted text-center">
+      <span className="text-[11px] font-medium uppercase tracking-[0.12em] leading-[1.3] text-muted text-center">
         {label}
       </span>
     </div>
