@@ -1,6 +1,6 @@
-# Randall LaPoint — Portfolio
+# Randall LaPoint, Jr. — Interactive Learning Designer
 
-Interactive learning designer portfolio. Built with React 19 + Three.js + GSAP + Tailwind CSS v4.
+Portfolio site for an interactive learning designer. Built with React 19 + Three.js + GSAP + Tailwind CSS v4.
 
 ## Stack
 
@@ -13,9 +13,10 @@ Interactive learning designer portfolio. Built with React 19 + Three.js + GSAP +
 ## Getting Started
 
 ```bash
-npm install
-npm run dev        # http://localhost:5173
-npm run build      # production build
+pnpm install
+pnpm run dev        # http://localhost:5173
+pnpm run build      # production build
+pnpm run lint       # eslint
 ```
 
 ## Project Structure
@@ -23,35 +24,29 @@ npm run build      # production build
 ```
 src/
   components/
-    HeroCanvas.tsx          # Three.js geometric field (parallax mouse)
-    RigidMotionsPreview.tsx # Mini R3F scene — reflection animation
-    DilationsPreview.tsx    # Mini R3F scene — dilation pulse animation
-    ModuleCard.tsx          # Card with embedded R3F preview + hover state
+    HeroCanvas.tsx               # Three.js geometric field (parallax mouse)
+    RigidMotionsPreview.tsx      # R3F scene — reflection animation
+    DilationsPreview.tsx         # R3F scene — dilation scale animation
+    PythagoreanTheoremPreview.tsx # R3F scene — three squares, unified scale pulse
+    ModuleCard.tsx               # Card with embedded R3F preview + hover state
+    StatStrip.tsx                # Animated stat counters (IntersectionObserver)
+    CoordGridBackground.tsx      # SVG coordinate grid for ISTE section
   hooks/
-    useScrollReveal.ts      # GSAP ScrollTrigger section reveal hook
-  tokens.ts                 # Design tokens (shared CSS + Three.js hex)
-  App.tsx                   # Main layout + all sections
-  index.css                 # Global styles + Tailwind v4 @theme tokens
-  r3f.d.ts                  # line_ element declaration for R3F/TS
+    useScrollReveal.ts           # GSAP ScrollTrigger reveal + nav + hero entrance hooks
+    useCountUp.ts                # Count-up animation hook
+  tokens.ts                      # Design tokens (shared CSS + Three.js hex)
+  App.tsx                        # Main layout + all section components
+  index.css                      # Global styles + Tailwind v4 @theme tokens
 ```
 
 ## Design Tokens (`src/tokens.ts`)
 
-All colors defined once in `tokens.ts` and referenced as:
-- CSS: `oklch(...)` values in `index.css` `@theme` block
-- Three.js: hex equivalents in `tokens.three`
+Single source of truth for the color palette:
+- **CSS**: `oklch(...)` values mirrored into `index.css` `@theme` as Tailwind custom properties
+- **Three.js**: hex equivalents in `tokens.three` for material colors
 
 ## Before Deploying
 
-1. Update module card `href` values to your actual Creative Lab URL
-2. Replace placeholder about copy in `App.tsx` with your final voice
-3. Verify email address in ISTE + contact sections
-4. Run `npm run build` — deploy `dist/` to Vercel
-
-## Rounds Left to Build
-
-- [ ] Round 3: Mobile responsive pass (grid → single column at 520px)
-- [ ] Round 4: Hover pause wired to ModuleCard previews (pass `paused={hovered}` into previews)
-- [ ] Round 5: GSAP hero text entrance animation (stagger in on load)
-- [ ] Round 6: ISTE section polish + final copy review
-- [ ] Round 7: Lighthouse + Vercel deploy
+1. Run `pnpm run build` — deploy `dist/` to Vercel
+2. Verify copy in `App.tsx` is final
+3. Confirm email address in ISTE and Contact sections

@@ -15,33 +15,48 @@ Package manager is pnpm (pnpm-lock.yaml present), but the scripts above work wit
 
 ## Architecture
 
-Single-page portfolio app. All content lives in `src/App.tsx` as self-contained section components (`WorkSection`, `AboutSection`, `PelicanSection`, `ISTESection`, `ContactSection`). No router.
+Single-page portfolio app. All content lives in `src/App.tsx` as self-contained section components (`WorkSection`, `SystemSection`, `AboutSection`, `PelicanSection`, `ISTESection`, `ContactSection`). No router.
 
 **Three.js layer** — Three separate React Three Fiber `<Canvas>` roots (R3F 9 + Three.js ~0.183):
 - `HeroCanvas` — full-viewport canvas positioned `absolute inset-0` behind hero text; animated wireframe polygons with parallax mouse tracking via `ParallaxCamera`; GSAP entrance on polygon opacity and z; CSS `.hero-glow`; DPR capped with `dpr={Math.min(window.devicePixelRatio, 2)}` on `<Canvas>`.
-- `RigidMotionsPreview` / `DilationsPreview` — embedded in `ModuleCard` with `minHeight: 200px` preview region, `opacity` 0.35 → 1 on hover. `ModuleCard` passes `paused={hovered}` via `cloneElement` so `useFrame` animations stop while the pointer is over the card.
+- `RigidMotionsPreview` — `useRef<THREE.Group>`, animates `position.x` in `useFrame`. Two triangles (pre-image ink + reflected amber) oscillating across a reflection axis.
+- `DilationsPreview` — `useRef<THREE.Group>`, animates `scale.setScalar(k)`. Origin dot + dilation rays + pre-image + dilated amber image.
+- `PythagoreanTheoremPreview` — single `useRef<THREE.Group>` wrapping all geometry (triangle, right angle marker, three squares). Scale animation pulses the whole composition. Canvas sprite labels (a², b², c²) via `THREE.Sprite` + `CanvasTexture` — no troika-three-text dependency.
+
+All three preview components are lazy-loaded via `React.lazy` + `Suspense`. Each is embedded in `ModuleCard` which passes `paused={hovered}` via `cloneElement`.
 
 **Scroll animations** — `useScrollReveal` attaches a GSAP ScrollTrigger to a section ref; any child with class `reveal-target` fades+slides in on scroll. `useNavReveal` slides the fixed nav in after the hero clears the viewport. The `.reveal-target` class sets `opacity: 0; transform: translateY(40px)` in CSS — this initial state is required for the animation to work.
 
-**Design tokens** — `src/tokens.ts` is the single source of truth. Colors are defined twice: as `oklch(...)` strings for inline styles/CSS, and as hex values under `tokens.three` for Three.js materials. `src/index.css` mirrors these into Tailwind v4 `@theme` CSS custom properties. The `s` object duplicated at the top of `App.tsx` and `ModuleCard.tsx` is a local shorthand — changes to the palette should go to `tokens.ts` first.
+**Design tokens** — `src/tokens.ts` is the single source of truth. Colors are defined twice: as `oklch(...)` strings for inline styles/CSS, and as hex values under `tokens.three` for Three.js materials. `src/index.css` mirrors these into Tailwind v4 `@theme` CSS custom properties.
 
 **Path alias** — `@/` maps to `src/` (configured in `vite.config.ts` and `tsconfig.app.json`).
 
-**R3F wireframe primitives** — Wire loops use the built-in JSX primitive `<line>` (maps to `THREE.Line`), with `<bufferGeometry>`, `<bufferAttribute attach="attributes-position" … />`, and `<lineBasicMaterial>`. Do not use `<threeLine>`; R3F 9 rejects it at runtime (“not part of the THREE namespace”). Types come from `@react-three/fiber`; no local `r3f.d.ts` shim is required.
+**R3F wireframe primitives** — Wire loops use the built-in JSX primitive `<line>` (maps to `THREE.Line`), with `<bufferGeometry>`, `<bufferAttribute attach="attributes-position" … />`, and `<lineBasicMaterial>`. Do not use `<threeLine>`; R3F 9 rejects it at runtime ("not part of the THREE namespace"). Types come from `@react-three/fiber`; no local `.d.ts` shim is required.
 
-**Module card styling** — Cards use the `module-card` class in `index.css` (`::after` hover glow). Inline styles in `ModuleCard.tsx` handle surface / surface-hi, amber hover border, and arrow `translateX(4px)`.
+**Module card styling** — Cards use the `module-card` class in `index.css` (`::after` hover glow). Disabled cards pass `data-disabled="true"` to suppress the glow via a CSS attribute rule. Hover classes are conditionally applied via Tailwind template literals (not inline styles). `ModuleCard` root is always `<div>`; navigation is via inner `<a>` elements to avoid nested-anchor violations.
+
+**SystemSection** — Two-row layer stack grid (`SYSTEM_ROWS` data constant + `SystemSection` component in `App.tsx`). Outer `flex flex-col gap-px bg-rule border border-rule` with inner `gap-px bg-rule` rows — the rule color bleeds through `gap-px` to form visible cell dividers. Label column is fixed `160px`; three module columns share remaining space equally at `min-[521px]:grid-cols-[160px_1fr_1fr_1fr]`.
 
 ## Build status
 
-All 8 rounds in `docs/BUILD_ORDER.md` are complete:
+Pre-ISTE implementation in progress. Branch strategy: feature branches → PR → merge to master.
 
-- Round 1: Dark palette + token migration
-- Round 2: Hero canvas — entrance animation, ambient glow, pixelRatio cap
-- Round 3: Module cards — dark surface, hover glow, pause on hover, amber accent
-- Round 4: Stat strip (`StatStrip`, `useCountUp`) with IntersectionObserver count-up
-- Round 5: GSAP scroll choreography — `useHeroEntrance`, FOUC-free reveal, proof block + ISTE char animation
-- Round 6: ISTE section + `CoordGridBackground` SVG grid
-- Round 7: Mobile pass — 520px/768px breakpoints, hero poly reduction, touch parallax off
-- Round 8: Lazy R3F components (`React.lazy` + `Suspense`), font preconnect, Vite manual chunks for `three` and `gsap`
+**Completed:**
+- Rounds 1–8 (initial commit): dark palette, hero canvas, module cards, stat strip, GSAP scroll choreography, ISTE section, mobile pass, lazy R3F + Vite chunking
+- Step 1: Work section 3-card grid — Pythagorean Theorem card, `ModuleCard` refactor, stat strip update
+- Step 2: The System section — two-row layer stack grid with scroll entrance
 
-**Remaining:** Vercel deploy (copy review is a manual human task before deploy)
+**Remaining:**
+- Step 3: Act Break between Work and System sections
+- Step 4: Live Demo section (blocked — demo component not yet built)
+- Step 5: Vercel deploy (copy review is a manual human task before deploy)
+
+## Pre-existing lint errors
+
+`HeroCanvas.tsx` has 2 known ESLint errors (`Math.random` in `useMemo`, camera mutation in `useFrame`). These are expected — `pnpm run lint` exits with code 1. Do not introduce new errors.
+
+## Git workflow
+
+- Feature branches: `feat/<description>` or `docs/<description>`
+- One branch per implementation step
+- Commit on branch → PR → merge to master
