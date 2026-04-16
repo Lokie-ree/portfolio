@@ -10,6 +10,9 @@ const RigidMotionsPreview = lazy(() =>
 const DilationsPreview = lazy(() =>
   import('@/components/DilationsPreview').then(m => ({ default: m.DilationsPreview }))
 )
+const PythagoreanTheoremPreview = lazy(() =>
+  import('@/components/PythagoreanTheoremPreview').then(m => ({ default: m.PythagoreanTheoremPreview }))
+)
 import { useScrollReveal, useNavReveal, useHeroEntrance, useProofBlockReveal, useISTEEntrance, useContactUnderline, useScrollProgress } from '@/hooks/useScrollReveal'
 import { StatStrip } from '@/components/StatStrip'
 import { CoordGridBackground } from '@/components/CoordGridBackground'
@@ -24,6 +27,30 @@ function SectionLabel({ children }: { children: string }) {
   )
 }
 
+type SystemModule = { name: string; standard: string; href?: string }
+type SystemRow = { layerName: string; repoName: string; modules: SystemModule[] }
+
+const SYSTEM_ROWS: SystemRow[] = [
+  {
+    layerName: 'Interactive',
+    repoName: 'creative-lab',
+    modules: [
+      { name: 'Rigid Motions',         standard: '8.G.A.1–3', href: 'https://creative-lab-five.vercel.app' },
+      { name: 'Dilations & Similarity', standard: '8.G.A.3–5', href: 'https://creative-lab-five.vercel.app' },
+      { name: 'Pythagorean Theorem',    standard: '8.G.B.7–8', href: 'https://creative-lab-five.vercel.app' },
+    ],
+  },
+  {
+    layerName: 'Lab Guide',
+    repoName: 'iste-26',
+    modules: [
+      { name: 'Rigid Motions',         standard: '8.G.A.1–3' },
+      { name: 'Dilations & Similarity', standard: '8.G.A.3–5' },
+      { name: 'Pythagorean Theorem',    standard: '8.G.B.7–8' },
+    ],
+  },
+]
+
 function WorkSection() {
   const ref = useScrollReveal<HTMLElement>()
   const proofRef = useProofBlockReveal<HTMLDivElement>()
@@ -31,14 +58,14 @@ function WorkSection() {
     <section ref={ref} id="work" className={sectionClass}>
       <SectionLabel>The Work — Creative Lab</SectionLabel>
       <div
-        className="reveal-target mb-10 grid grid-cols-1 gap-px border border-rule bg-rule min-[521px]:grid-cols-2"
+        className="reveal-target mb-10 grid grid-cols-1 gap-px border border-rule bg-rule min-[521px]:grid-cols-3"
       >
         <ModuleCard
           status="Live — Complete"
           title="Rigid Motions"
           standard="8.G.A.1–3 · Grade 8 Geometry"
           description="Translations, reflections, and rotations through a predict-and-reveal loop. Formula appears after demonstrated understanding — never before."
-          href="https://creative-lab.vercel.app"
+          href="https://creative-lab-five.vercel.app"
           preview={<Suspense fallback={<div style={{ minHeight: 200, background: 'var(--color-surface)' }} />}><RigidMotionsPreview paused={false} /></Suspense>}
         />
         <ModuleCard
@@ -46,14 +73,26 @@ function WorkSection() {
           title="Dilations & Similarity"
           standard="8.G.A.3–5 · Grade 8 Geometry"
           description="Scale factor to AA criterion across 14 rounds and 4 phases. Students prove triangle similarity before they're told what similarity means."
-          href="https://creative-lab.vercel.app"
+          href="https://creative-lab-five.vercel.app"
           preview={<Suspense fallback={<div style={{ minHeight: 200, background: 'var(--color-surface)' }} />}><DilationsPreview paused={false} /></Suspense>}
+        />
+        <ModuleCard
+          status="Live — Complete"
+          title="Pythagorean Theorem"
+          standard="8.G.B.7–8 · Grade 8 Geometry"
+          description="Area-first proof of the theorem. Students discover a² + b² = c² through three animated squares before the algebraic statement appears."
+          href="https://creative-lab-five.vercel.app"
+          preview={
+            <Suspense fallback={<div style={{ minHeight: 200, background: 'var(--color-surface)' }} />}>
+              <PythagoreanTheoremPreview paused={false} />
+            </Suspense>
+          }
         />
       </div>
 
       <StatStrip />
 
-      <div ref={proofRef} className="relative bg-amber-dim px-5 py-[18px]">
+      <div ref={proofRef} className="relative bg-surface px-5 py-[18px]">
         <div className="proof-border absolute left-0 top-0 h-full w-0.5 bg-amber" />
         <div className="proof-content">
           <p className="font-display text-sm font-light italic leading-relaxed text-ink">
@@ -64,6 +103,50 @@ function WorkSection() {
             IVLA STEM Club · tested twice weekly
           </cite>
         </div>
+      </div>
+    </section>
+  )
+}
+
+function SystemSection() {
+  const ref = useScrollReveal<HTMLElement>()
+  return (
+    <section ref={ref} className={sectionClass}>
+      <SectionLabel>The System</SectionLabel>
+      <div className="flex flex-col gap-px border border-rule bg-rule">
+        {SYSTEM_ROWS.map((row) => (
+          <div
+            key={row.layerName}
+            className="reveal-target grid grid-cols-1 gap-px bg-rule min-[521px]:grid-cols-[160px_1fr_1fr_1fr]"
+          >
+            {/* Layer label cell — amber left border anchors hierarchy */}
+            <div className="border-l-[3px] border-l-amber bg-surface px-4 py-5">
+              <p className="text-[12px] font-semibold text-amber">{row.layerName}</p>
+              <p className="mt-0.5 text-[10px] text-muted">{row.repoName}</p>
+            </div>
+
+            {/* Module cells */}
+            {row.modules.map((mod) => (
+              <div
+                key={mod.name}
+                className="bg-surface px-4 py-5 transition-colors duration-150 hover:bg-surface-hi"
+              >
+                <p className="text-[13px] font-normal text-ink">{mod.name}</p>
+                <p className="mt-0.5 text-[11px] text-muted">{mod.standard}</p>
+                {mod.href && (
+                  <a
+                    href={mod.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-3 inline-block text-[11px] text-amber no-underline transition-colors hover:underline"
+                  >
+                    Live →
+                  </a>
+                )}
+              </div>
+            ))}
+          </div>
+        ))}
       </div>
     </section>
   )
@@ -84,7 +167,7 @@ const ABOUT_ACTS = [
   {
     hook: "Now I build the tools that scale that insight.",
     body: "React Three Fiber. GSAP. Real 8th graders twice a week. Every module is tested until the behavior confirms the design. The goal: interactive experiences that make hard ideas feel obvious — in retrospect.",
-    accentClass: 'bg-rule',
+    accentClass: 'bg-muted',
   },
 ]
 
@@ -119,9 +202,9 @@ function PelicanSection() {
   const ref = useScrollReveal<HTMLElement>()
   return (
     <section ref={ref} className={sectionClass}>
-      <div className="reveal-target grid grid-cols-1 items-start gap-6 min-[521px]:grid-cols-[1fr_2fr] min-[521px]:gap-12">
+      <div className="reveal-target grid grid-cols-1 items-start gap-4 min-[521px]:grid-cols-[1fr_2fr] min-[521px]:gap-8">
         <div>
-          <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.14em] text-muted">
+          <p className="mb-4 text-[11px] font-medium uppercase tracking-[0.14em] text-muted">
             Also Building
           </p>
           <span className="inline-block border border-rule px-2 py-0.5 text-[11px] uppercase tracking-wide text-muted">
@@ -131,10 +214,8 @@ function PelicanSection() {
         <div className="text-[15px] leading-[1.8] text-ink">
           <p className="mb-3 font-display text-xl font-normal">Pelican AI</p>
           <p>
-            An AI prompt-alignment tool for Louisiana teachers, built on the LER, LSSM, and LEADS
-            frameworks. Designed to make the state's instructional standards actually useful in daily
-            planning — not a compliance checkbox, but a thinking partner aligned to how Louisiana
-            teachers work.
+            An AI coaching layer for Louisiana teachers — built on the LSSM, LER, and LEADS
+            frameworks. Standards-aligned planning that works the way teachers actually think.
           </p>
         </div>
       </div>
@@ -217,6 +298,15 @@ function ContactSection() {
   )
 }
 
+function Footer() {
+  return (
+    <footer className="flex items-center justify-between py-6 text-[11px] text-muted border-t border-rule">
+      <span>© 2026 Randall LaPoint, Jr.</span>
+      <a href="#" className="text-muted no-underline transition-colors hover:text-amber">↑ Top</a>
+    </footer>
+  )
+}
+
 export default function App() {
   const heroRef = useRef<HTMLDivElement>(null)
   useNavReveal(typeof window !== 'undefined' ? window.innerHeight * 0.8 : 600)
@@ -242,7 +332,7 @@ export default function App() {
             <li key={id}>
               <a
                 href={`#${id}`}
-                className="text-[12px] uppercase tracking-wide text-muted no-underline min-[521px]:text-[13px]"
+                className="text-[12px] uppercase tracking-wide text-muted no-underline transition-colors hover:text-amber min-[521px]:text-[13px]"
               >
                 {id}
               </a>
@@ -275,7 +365,9 @@ export default function App() {
               what I learned about how students actually learn.
             </p>
 
-            <div className="hero-proof inline-flex max-w-full items-center gap-2.5 border border-rule bg-amber-dim px-4 py-2.5 text-[13px] leading-snug text-ink">
+            <div
+              className="hero-proof inline-flex max-w-full items-center gap-2.5 bg-amber/12 border border-amber/50 px-4 py-2.5 text-[13px] leading-snug text-ink"
+            >
               <span className="size-[7px] shrink-0 rounded-full bg-amber" />
               Every module is tested twice a week with real students. Their behavior shapes every
               iteration.
@@ -284,10 +376,12 @@ export default function App() {
         </div>
 
         <WorkSection />
+        <SystemSection />
         <AboutSection />
         <PelicanSection />
         <ISTESection />
         <ContactSection />
+        <Footer />
       </main>
     </>
   )
