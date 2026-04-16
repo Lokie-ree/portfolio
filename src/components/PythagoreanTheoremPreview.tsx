@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useRef, useMemo } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { tokens } from '@/tokens'
@@ -8,28 +8,25 @@ const Ox = -0.2, Oy = -0.15
 const Ax =  0.2, Ay = -0.15   // O + (0.4, 0)
 const Bx = -0.2, By =  0.15   // O + (0, 0.3)
 
-// Triangle outline loop
 const TRI = new Float32Array([Ox, Oy, 0,  Ax, Ay, 0,  Bx, By, 0,  Ox, Oy, 0])
 
-// Right angle marker (L in corner, interior of triangle)
 const RA = new Float32Array([
   Ox + 0.06, Oy, 0,
   Ox + 0.06, Oy + 0.06, 0,
   Ox, Oy + 0.06, 0,
 ])
 
-// Square on leg a (extends downward, area = a² = 0.16)
+// Square on leg a (extends downward)
 const SQ_A = new Float32Array([
   Ox, Oy, 0,   Ax, Ay, 0,   Ax, Ay - 0.4, 0,   Ox, Oy - 0.4, 0,   Ox, Oy, 0,
 ])
 
-// Square on leg b (extends leftward, area = b² = 0.09)
+// Square on leg b (extends leftward)
 const SQ_B = new Float32Array([
   Ox, Oy, 0,   Bx, By, 0,   Bx - 0.3, By, 0,   Ox - 0.3, Oy, 0,   Ox, Oy, 0,
 ])
 
-// Square on hypotenuse c (extends outward, area = c² = 0.25)
-// AB direction: (-0.4, 0.3). Outward perpendicular (CW 90°): (0.3, 0.4)
+// Square on hypotenuse c (outward perpendicular CW 90°: (0.3, 0.4))
 const SQ_C = new Float32Array([
   Ax, Ay, 0,
   Bx, By, 0,
@@ -38,33 +35,39 @@ const SQ_C = new Float32Array([
   Ax, Ay, 0,
 ])
 
-function makeLine(pts: Float32Array, color: number, opacity: number) {
-  const geo = new THREE.BufferGeometry()
-  geo.setAttribute('position', new THREE.BufferAttribute(pts.slice(), 3))
-  const mat = new THREE.LineBasicMaterial({ color, transparent: true, opacity })
-  return new THREE.Line(geo, mat)
+// Canvas texture sprite — lightweight alternative to troika-three-text
+function makeLabel(text: string, color: string): THREE.Sprite {
+  const canvas = document.createElement('canvas')
+  canvas.width = 128
+  canvas.height = 128
+  const ctx = canvas.getContext('2d')!
+  ctx.font = 'bold 64px sans-serif'
+  ctx.fillStyle = color
+  ctx.textAlign = 'center'
+  ctx.textBaseline = 'middle'
+  ctx.fillText(text, 64, 64)
+  const texture = new THREE.CanvasTexture(canvas)
+  const material = new THREE.SpriteMaterial({ map: texture, transparent: true })
+  return new THREE.Sprite(material)
 }
 
 function Scene({ paused }: { paused: boolean }) {
-  // Imperative lines — avoids SVG/R3F <line> ref TS collision
-  const sqA = useMemo(() => makeLine(SQ_A, tokens.three.ink as number, 0.35), [])
-  const sqB = useMemo(() => makeLine(SQ_B, tokens.three.ink as number, 0.35), [])
-  const sqC = useMemo(() => makeLine(SQ_C, tokens.three.amber as number, 0.62), [])
+  const group = useRef<THREE.Group>(null)
+
+  // Square centers: a²=(0,−0.35), b²=(−0.35,0), c²=(0.15,0.2)
+  const labelA = useMemo(() => makeLabel('a²', '#7a7268'), [])
+  const labelB = useMemo(() => makeLabel('b²', '#7a7268'), [])
+  const labelC = useMemo(() => makeLabel('c²', '#d4962a'), [])
 
   useFrame(({ clock }) => {
-    if (paused) return
+    if (paused || !group.current) return
     const t = clock.getElapsedTime()
-    // a² and b² breathe together
-    const legs = 0.35 + Math.sin(t * 0.85) * 0.25
-    // c² follows with a phase offset — same rhythm, steadier presence
-    const hyp = 0.62 + Math.sin(t * 0.85 + 1.2) * 0.13
-    ;(sqA.material as THREE.LineBasicMaterial).opacity = legs
-    ;(sqB.material as THREE.LineBasicMaterial).opacity = legs
-    ;(sqC.material as THREE.LineBasicMaterial).opacity = hyp
+    const k = 1 + Math.sin(t * 0.85) * 0.12
+    group.current.scale.setScalar(k)
   })
 
   return (
-    <>
+    <group ref={group}>
       {/* Triangle outline */}
       <line>
         <bufferGeometry>
@@ -81,11 +84,35 @@ function Scene({ paused }: { paused: boolean }) {
         <lineBasicMaterial color={tokens.three.ink} transparent opacity={0.4} />
       </line>
 
-      {/* Animated squares — a², b², c² */}
-      <primitive object={sqA} />
-      <primitive object={sqB} />
-      <primitive object={sqC} />
-    </>
+      {/* a² square (ink) */}
+      <line>
+        <bufferGeometry>
+          <bufferAttribute attach="attributes-position" args={[SQ_A, 3]} />
+        </bufferGeometry>
+        <lineBasicMaterial color={tokens.three.ink} transparent opacity={0.35} />
+      </line>
+
+      {/* b² square (ink) */}
+      <line>
+        <bufferGeometry>
+          <bufferAttribute attach="attributes-position" args={[SQ_B, 3]} />
+        </bufferGeometry>
+        <lineBasicMaterial color={tokens.three.ink} transparent opacity={0.35} />
+      </line>
+
+      {/* c² square (amber) */}
+      <line>
+        <bufferGeometry>
+          <bufferAttribute attach="attributes-position" args={[SQ_C, 3]} />
+        </bufferGeometry>
+        <lineBasicMaterial color={tokens.three.amber} transparent opacity={0.75} />
+      </line>
+
+      {/* Labels centered within each square */}
+      <primitive object={labelA} position={[0, -0.35, 0.01]} scale={[0.18, 0.18, 0.18]} />
+      <primitive object={labelB} position={[-0.35, 0, 0.01]} scale={[0.18, 0.18, 0.18]} />
+      <primitive object={labelC} position={[0.15, 0.2, 0.01]} scale={[0.18, 0.18, 0.18]} />
+    </group>
   )
 }
 
