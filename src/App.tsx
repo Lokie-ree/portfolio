@@ -27,6 +27,30 @@ function SectionLabel({ children }: { children: string }) {
   )
 }
 
+type SystemModule = { name: string; standard: string; href?: string }
+type SystemRow = { layerName: string; repoName: string; modules: SystemModule[] }
+
+const SYSTEM_ROWS: SystemRow[] = [
+  {
+    layerName: 'Interactive',
+    repoName: 'creative-lab',
+    modules: [
+      { name: 'Rigid Motions',         standard: '8.G.A.1–3', href: 'https://creative-lab-five.vercel.app' },
+      { name: 'Dilations & Similarity', standard: '8.G.A.3–5', href: 'https://creative-lab-five.vercel.app' },
+      { name: 'Pythagorean Theorem',    standard: '8.G.B.7–8', href: 'https://creative-lab-five.vercel.app' },
+    ],
+  },
+  {
+    layerName: 'Lab Guide',
+    repoName: 'iste-26',
+    modules: [
+      { name: 'Rigid Motions',         standard: '8.G.A.1–3' },
+      { name: 'Dilations & Similarity', standard: '8.G.A.3–5' },
+      { name: 'Pythagorean Theorem',    standard: '8.G.B.7–8' },
+    ],
+  },
+]
+
 function WorkSection() {
   const ref = useScrollReveal<HTMLElement>()
   const proofRef = useProofBlockReveal<HTMLDivElement>()
@@ -79,6 +103,50 @@ function WorkSection() {
             IVLA STEM Club · tested twice weekly
           </cite>
         </div>
+      </div>
+    </section>
+  )
+}
+
+function SystemSection() {
+  const ref = useScrollReveal<HTMLElement>()
+  return (
+    <section ref={ref} className={sectionClass}>
+      <SectionLabel>The System</SectionLabel>
+      <div className="flex flex-col gap-px border border-rule bg-rule">
+        {SYSTEM_ROWS.map((row) => (
+          <div
+            key={row.layerName}
+            className="reveal-target grid grid-cols-1 gap-px bg-rule min-[521px]:grid-cols-[160px_1fr_1fr_1fr]"
+          >
+            {/* Layer label cell — amber left border anchors hierarchy */}
+            <div className="border-l-[3px] border-l-amber bg-surface px-4 py-5">
+              <p className="text-[12px] font-semibold text-amber">{row.layerName}</p>
+              <p className="mt-0.5 text-[10px] text-muted">{row.repoName}</p>
+            </div>
+
+            {/* Module cells */}
+            {row.modules.map((mod) => (
+              <div
+                key={mod.name}
+                className="bg-surface px-4 py-5 transition-colors duration-150 hover:bg-surface-hi"
+              >
+                <p className="text-[13px] font-normal text-ink">{mod.name}</p>
+                <p className="mt-0.5 text-[11px] text-muted">{mod.standard}</p>
+                {mod.href && (
+                  <a
+                    href={mod.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-3 inline-block text-[11px] text-amber no-underline transition-colors hover:underline"
+                  >
+                    Live →
+                  </a>
+                )}
+              </div>
+            ))}
+          </div>
+        ))}
       </div>
     </section>
   )
@@ -308,6 +376,7 @@ export default function App() {
         </div>
 
         <WorkSection />
+        <SystemSection />
         <AboutSection />
         <PelicanSection />
         <ISTESection />
