@@ -1,5 +1,8 @@
-import { useRef, lazy, Suspense } from 'react'
+import { useRef, lazy, Suspense, useState } from 'react'
 import { ModuleCard } from '@/components/ModuleCard'
+import { useScrollReveal, useNavReveal, useHeroEntrance, useProofBlockReveal, useISTEEntrance, useContactUnderline, useScrollProgress } from '@/hooks/useScrollReveal'
+import { StatStrip } from '@/components/StatStrip'
+import { CoordGridBackground } from '@/components/CoordGridBackground'
 
 const HeroCanvas = lazy(() =>
   import('@/components/HeroCanvas').then(m => ({ default: m.HeroCanvas }))
@@ -13,9 +16,9 @@ const DilationsPreview = lazy(() =>
 const PythagoreanTheoremPreview = lazy(() =>
   import('@/components/PythagoreanTheoremPreview').then(m => ({ default: m.PythagoreanTheoremPreview }))
 )
-import { useScrollReveal, useNavReveal, useHeroEntrance, useProofBlockReveal, useISTEEntrance, useContactUnderline, useScrollProgress } from '@/hooks/useScrollReveal'
-import { StatStrip } from '@/components/StatStrip'
-import { CoordGridBackground } from '@/components/CoordGridBackground'
+const CrossSectionPreview = lazy(() =>
+  import('@/components/CrossSectionPreview').then(m => ({ default: m.CrossSectionPreview }))
+)
 
 const sectionClass = 'border-b border-rule py-16'
 
@@ -102,6 +105,57 @@ function WorkSection() {
           <cite className="mt-2 block text-xs font-normal uppercase tracking-wide text-muted not-italic">
             IVLA STEM Club · tested twice weekly
           </cite>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function LiveDemoSection() {
+  const ref = useScrollReveal<HTMLElement>()
+  const [hovered, setHovered] = useState(false)
+
+  return (
+    <section ref={ref} className={sectionClass}>
+      <SectionLabel>Live Demo — Cross-Section Explorer</SectionLabel>
+
+      <div
+        className="reveal-target group relative overflow-hidden border border-rule bg-surface transition-[background-color,border-color] duration-150 cursor-pointer hover:border-amber hover:bg-surface-hi"
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+      >
+        {/* Amber top bar */}
+        <div className="h-[3px] w-full shrink-0 bg-amber-dim" />
+
+        {/* Horizontal split: preview (1.2fr) | text (1fr) */}
+        <div className="grid grid-cols-1 min-[521px]:grid-cols-[1.2fr_1fr]">
+          {/* Preview pane — above text on mobile (source order) */}
+          <div className="h-[220px] min-[521px]:h-[280px] opacity-60 transition-opacity duration-300 group-hover:opacity-100">
+            <Suspense fallback={<div style={{ minHeight: 220, background: 'var(--color-surface)' }} />}>
+              <CrossSectionPreview paused={hovered} />
+            </Suspense>
+          </div>
+
+          {/* Text pane */}
+          <div className="flex flex-col justify-center border-t border-rule px-6 py-6 min-[521px]:border-l min-[521px]:border-t-0">
+            <p className="mb-2 text-[11px] font-medium uppercase tracking-wide text-amber">
+              In Progress — CSE
+            </p>
+            <p className="mb-2 font-display text-[22px] font-normal leading-tight text-ink">
+              Cross-Section Explorer
+            </p>
+            <p className="mb-5 text-[13px] leading-relaxed text-muted">
+              Drag a plane through a cube. Watch the slice become a hexagon.
+            </p>
+            <a
+              href="https://creative-lab-demos.vercel.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block text-xs tracking-wide text-amber no-underline transition-transform duration-200 ease-out group-hover:translate-x-1"
+            >
+              Open demo →
+            </a>
+          </div>
         </div>
       </div>
     </section>
@@ -376,6 +430,7 @@ export default function App() {
         </div>
 
         <WorkSection />
+        <LiveDemoSection />
         <SystemSection />
         <AboutSection />
         <PelicanSection />
