@@ -1,5 +1,7 @@
 # Round 1 — Dark Palette + Token Migration Implementation Plan
 
+**Status:** Completed (implemented)
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Migrate the entire site from the light off-white palette to the warm near-black dark palette specified in `docs/CREATIVE_DIRECTION.md § Palette`.

@@ -1,5 +1,7 @@
 # Scroll Choreography Implementation Plan
 
+**Status:** Completed (implemented)
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Add cinematic scroll choreography across all sections — hero entrance, FOUC fix, proof block border animation, about column slide-in, ISTE char split, and contact underline draw.
