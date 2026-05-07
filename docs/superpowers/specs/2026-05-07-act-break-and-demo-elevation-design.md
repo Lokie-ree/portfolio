@@ -45,7 +45,7 @@ Complete rewrite of `src/components/CrossSectionPreview.tsx`. The existing pre-b
 
 ### The Math
 
-The cube is a unit cube centered at the origin (vertices at ±0.5 on each axis). The cutting plane is kept perpendicular to the cube's main diagonal — the existing rotation `[-Math.acos(1/Math.sqrt(3)), Math.PI/4, 0]` is correct and unchanged.
+The cube is a unit cube centered at the origin (vertices at ±0.5 on each axis). All intersection math is computed in the cube's **local space** — the local cube is always axis-aligned regardless of visual rotation (see Scene Group Architecture below).
 
 The plane equation is `x + y + z = k`. As `k` sweeps from −0.75 to +0.75, the cross-section evolves:
 
@@ -55,25 +55,45 @@ k =  0      →  regular hexagon (midpoints of all 6 cut edges)
 k = +0.75  →  small triangle (near vertex [+0.5,+0.5,+0.5])
 ```
 
+### Scene Group Architecture
+
+**All scene objects — cube edges, cutting plane, cross-section polygon, vertex dots — are children of a single wrapper `<group ref={groupRef}>`.** The visual rotation is applied to `groupRef.current.rotation` in `useFrame`:
+
+```ts
+groupRef.current.rotation.y += 0.004
+groupRef.current.rotation.x = Math.sin(t * 0.12) * 0.15
+```
+
+Because the group's children stay in a fixed local frame (unit cube at origin), the intersection math (`x + y + z = k`) remains geometrically correct at all times. The group's world transform handles all visual rotation. Do not rotate the cube independently of the plane or polygon geometry.
+
+The `planeGroup` with the cutting plane's fixed tilt (`[-Math.acos(1/Math.sqrt(3)), Math.PI/4, 0]`) is a child of `groupRef`, not a sibling. The cross-section polygon and vertex dots are also children of `groupRef` at the top level (not inside `planeGroup`), so their positions are in the same local coordinate space as the cube edges.
+
 ### Intersection Computation (runs in `useFrame`)
 
-For each of the 12 cube edges, parameterize as `P(t) = A + t*(B−A)`, `t ∈ [0,1]`:
+The 12 cube edges are stored as a module-level constant — an array of `[A, B]` `THREE.Vector3` pairs defining each edge of a unit cube at origin. This array is never recreated.
+
+For each edge, parameterize as `P(t) = A + t*(B−A)`, `t ∈ (0, 1)` **open interval** to avoid double-counting shared vertices at cube corners:
 
 ```ts
 const denom = (B.x - A.x) + (B.y - A.y) + (B.z - A.z)
 if (Math.abs(denom) < 1e-10) continue  // edge parallel to plane
 const t = (k - (A.x + A.y + A.z)) / denom
-if (t >= 0 && t <= 1) {
-  intersectionPoints.push(A.clone().lerp(B, t))
+if (t > 1e-10 && t < 1 - 1e-10) {        // open interval — avoids corner double-count
+  pts.push(A.clone().lerp(B, t))
   intersectedEdgeIndices.add(edgeIndex)
 }
 ```
 
+Using a strict open interval (`> 1e-10`, `< 1 - 1e-10`) ensures that cube corners — where three edges meet at a single point — are only counted once (by none of the three edges, which each would produce `t=0` or `t=1`). At extreme `k` values the polygon degenerates to a point; fewer than 3 intersection points means no polygon is drawn.
+
 After collecting intersection points, sort them as a convex polygon:
 1. Compute centroid of all points
-2. Project onto the cutting plane using two orthogonal basis vectors perpendicular to `[1,1,1]/√3`
-3. Sort by `atan2` of the projected 2D coordinates
-4. Use sorted order to build the `BufferGeometry` for the outline and fill
+2. Project onto the cutting plane using these two fixed orthonormal basis vectors:
+   - `u = normalize(new THREE.Vector3(1, -1, 0))` → `[0.7071, -0.7071, 0]`
+   - `v = normalize(new THREE.Vector3(1,  1, -2))` → `[0.4082, 0.4082, -0.8165]`
+3. For each point `p`, compute `pu = dot(p - centroid, u)` and `pv = dot(p - centroid, v)`, then angle = `Math.atan2(pv, pu)`
+4. Sort points by ascending angle
+5. Use sorted order to build/update the `BufferGeometry` for the outline and fill
 
 ### Animation Cycle
 
@@ -90,15 +110,12 @@ Use a custom easing for the sweep phases — `easeInOutSine` feels natural for a
 
 ### What's Rendered
 
-**Cube:**
-- `EdgesGeometry` on a `BoxGeometry(1,1,1)` — unchanged concept, but with slow rotation
-- Rotation: `mesh.rotation.y += 0.004` per frame; `mesh.rotation.x = Math.sin(t * 0.12) * 0.15` (gentle wobble)
-- Color: `tokens.three.ink`, opacity 0.45
-
-**Intersected edge highlights:**
-- Re-render the 12 edges individually as `<line>` segments
-- Edges currently intersected by the plane: `tokens.three.amber`, opacity 0.8
-- All other edges: `tokens.three.ink`, opacity 0.35
+**Cube edges:**
+- The existing `<lineSegments geometry={cubeEdges}>` + `EdgesGeometry` is **removed entirely**.
+- Replace with 12 individual `<line>` primitives, one per cube edge, each with its own `lineBasicMaterial` ref.
+- This allows per-edge color: intersected edges use `tokens.three.amber` opacity 0.8, all others use `tokens.three.ink` opacity 0.35.
+- All 12 `<line>` elements and their material refs are allocated once; only `color` and `opacity` are mutated in `useFrame`.
+- Visual rotation is handled by the parent `groupRef` — individual edge meshes are never rotated directly.
 
 **Cross-section fill:**
 - `THREE.BufferGeometry` built from the sorted intersection polygon (triangle fan from centroid)
@@ -119,10 +136,12 @@ Use a custom easing for the sweep phases — `easeInOutSine` feels natural for a
 
 ### Implementation notes
 
-- All geometry objects (sphere, line buffer) are allocated once in `useMemo` / component init and mutated in `useFrame` — no geometry recreation per frame
-- Max 6 intersection points — pre-allocate `Float32Array(18)` for the line loop positions, update in place
-- Pre-allocate up to 6 sphere meshes, toggle `visible` based on intersection count
-- The 12 cube edges can be stored as a constant array of `[A, B]` vertex pairs and referenced by index
+- All geometry objects are allocated once and mutated in `useFrame` — no geometry recreation per frame
+- **Outline line loop:** pre-allocate `Float32Array(21)` — max 6 points + 1 closing repeat, 3 floats each: (6+1)×3=21. Write sorted points into the array each frame, then set `attribute.needsUpdate = true` on the position `bufferAttribute` so Three.js re-uploads to the GPU. Update `bufferAttribute.count` to `n + 1` (n points plus the closing repeat).
+- **Fill mesh:** pre-allocate `Float32Array(36)` — max fan is 4 triangles × 3 vertices × 3 floats = 36. Fan formula: for `n` perimeter points, `(n-2)` triangles. Write the triangle-fan positions into the array, set `attribute.needsUpdate = true`, and update `geometry.setDrawRange(0, (n-2)*3)` each frame.
+- **Vertex dots:** pre-allocate 6 `THREE.Mesh` instances with `SphereGeometry(0.025)`, each with its own `MeshBasicMaterial({ color: tokens.three.amber, transparent: true })` set at construction. In `useFrame`, toggle `.visible`, set `.position` from the intersection points, and set `.material.opacity` directly (1.0 during hold phase, 0.5 during sweep). Never create new material instances in `useFrame`.
+- **Edge constant:** the 12 `[A, B]` pairs are a module-level `const CUBE_EDGES` — `THREE.Vector3` pairs, never recreated.
+- **`paused` behavior:** when `paused` is true, `useFrame` returns early — the animation cycle freezes at its current `k` value and the polygon holds whatever shape it was at. This is correct (the viewer sees the frozen geometry, not a blank canvas). No special handling needed for the hold phase.
 
 ---
 
@@ -158,11 +177,13 @@ Final copy is a manual human task before deploy.
 
 New hook in `src/hooks/useScrollReveal.ts`. Does **not** extend `useScrollReveal` — the delay behavior is semantically different.
 
+Follows the same `useEffect`-only pattern as `useProofBlockReveal` — `gsap.set` and `ScrollTrigger.create` both live in a single `useEffect`. Do **not** use `useLayoutEffect` here; ScrollTrigger measurements must wait until after the browser has painted and laid out sections below.
+
 ```ts
 export function useActBreakReveal<T extends HTMLElement>() {
   const ref = useRef<T>(null)
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const el = ref.current
     if (!el) return
     const text = el.querySelector('.act-break-text')
@@ -175,6 +196,7 @@ export function useActBreakReveal<T extends HTMLElement>() {
       ScrollTrigger.create({
         trigger: el,
         start: 'top 80%',
+        once: true,                          // fires only on first entry — no flash on scroll-up/re-enter
         onEnter: () => {
           gsap.to(text, { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out', delay: 0.6 })
           gsap.to(rule, { opacity: 1, duration: 0.3, delay: 1.0 })

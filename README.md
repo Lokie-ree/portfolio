@@ -12,8 +12,10 @@ Portfolio site for an interactive learning designer. Built with React 19 + Three
 
 ## Current Status
 
-- Completed: Work 3-card grid, Live Demo section, System section, About 3-act narrative, ISTE coordinate grid treatment, scroll choreography, responsive pass
-- Remaining: Act Break section between Work and System, final copy review, deployment
+Feature-complete. All sections implemented and passing lint + build.
+
+- Completed: Work 3-card grid (hover-pause), Live Demo section (live intersection geometry), Act Break, System section, About 3-act narrative, ISTE coordinate grid, scroll choreography, responsive pass, Pelican AI link
+- Remaining: final copy review (About narrative, Act Break quote), Vercel deploy
 
 ## Getting Started
 

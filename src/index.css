@@ -78,4 +78,10 @@
       transparent 70%
     );
   }
+
+  /* Act Break — initial hidden state prevents first-paint flash before GSAP sets these */
+  .act-break-text,
+  .act-break-rule {
+    opacity: 0;
+  }
 }

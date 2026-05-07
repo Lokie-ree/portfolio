@@ -22,9 +22,9 @@ Single-page portfolio app. All content lives in `src/App.tsx` as self-contained 
 - `RigidMotionsPreview` — `useRef<THREE.Group>`, animates `position.x` in `useFrame`. Two triangles (pre-image ink + reflected amber) oscillating across a reflection axis.
 - `DilationsPreview` — `useRef<THREE.Group>`, animates `scale.setScalar(k)`. Origin dot + dilation rays + pre-image + dilated amber image.
 - `PythagoreanTheoremPreview` — single `useRef<THREE.Group>` wrapping all geometry (triangle, right angle marker, three squares). Scale animation pulses the whole composition. Canvas sprite labels (a², b², c²) via `THREE.Sprite` + `CanvasTexture` — no troika-three-text dependency.
-- `CrossSectionPreview` — wireframe cube + oscillating amber cutting plane + synced hexagon outline opacity pulse, used in `LiveDemoSection`.
+- `CrossSectionPreview` — live plane-cube intersection geometry (plane `x+y+z=k` sweeps through unit cube); 12 individual edge lines with per-edge amber highlight on intersection; convex polygon fill + outline + vertex dots; 6s orchestrated animation cycle (triangle → hexagon hold → triangle). `paused` freezes the cycle at current `k`.
 
-All three preview components are lazy-loaded via `React.lazy` + `Suspense`. Each is embedded in `ModuleCard` which passes `paused={hovered}` via `cloneElement`.
+All preview components are lazy-loaded via `React.lazy` + `Suspense`. Each is embedded in `ModuleCard` which wraps the preview in `<Suspense>` and passes `paused={hovered}` via `cloneElement`. The `Suspense` boundary lives inside `ModuleCard` — do not add it to the `preview` prop at the call site.
 
 **Scroll animations** — `useScrollReveal` attaches a GSAP ScrollTrigger to a section ref; any child with class `reveal-target` fades+slides in on scroll. `useNavReveal` slides the fixed nav in after the hero clears the viewport. The `.reveal-target` class sets `opacity: 0; transform: translateY(40px)` in CSS — this initial state is required for the animation to work.
 
@@ -47,15 +47,16 @@ Pre-ISTE implementation is near-final. Branch strategy: feature branches → PR 
 - Step 1: Work section 3-card grid — Pythagorean Theorem card, `ModuleCard` refactor, stat strip update
 - Step 2: The System section — two-row layer stack grid with scroll entrance
 - Step 4: Live Demo section — `LiveDemoSection` + `CrossSectionPreview`
+- Step 5: Act Break section + `CrossSectionPreview` live intersection geometry overhaul
 - Spec-gap items implemented in app: scroll progress bar, footer, hero proof pill glow, nav hover color transition, 3-act About narrative
+- Polish: hover-pause fix on Work cards, Hero lint errors resolved, System section enriched with descriptions + status dots, Pelican AI link added
 
 **Remaining:**
-- Step 3: Act Break between Work and System sections
-- Step 5: Vercel deploy (copy review is a manual human task before deploy)
+- Vercel deploy (copy review is a manual human task before deploy)
 
-## Pre-existing lint errors
+## Lint status
 
-`HeroCanvas.tsx` has 2 known ESLint errors (`Math.random` in `useMemo`, camera mutation in `useFrame`). These are expected — `pnpm run lint` exits with code 1. Do not introduce new errors.
+`pnpm run lint` exits with code 0 — no errors. Do not introduce new errors.
 
 ## Git workflow
 
