@@ -210,6 +210,12 @@ export function useContactUnderline<T extends HTMLElement>(ref: RefObject<T | nu
   }, [ref])
 }
 
+/**
+ * Animate the act break text and rule on scroll entry.
+ * Targets .act-break-text (opacity + y) and .act-break-rule (opacity only).
+ * 0.6s delay on text — the beat of silence before the reveal.
+ * Uses useEffect (not useLayoutEffect) — ScrollTrigger needs post-paint layout.
+ */
 export function useActBreakReveal<T extends HTMLElement>() {
   const ref = useRef<T>(null)
 
