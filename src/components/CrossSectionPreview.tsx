@@ -31,6 +31,14 @@ const CUBE_EDGES: [THREE.Vector3, THREE.Vector3][] = [
 const BASIS_U = new THREE.Vector3(1, -1, 0).normalize()
 const BASIS_V = new THREE.Vector3(1, 1, -2).normalize()
 
+// Scratch pool for computeIntersection — allocated once, reused each frame
+const _scratchPoints: THREE.Vector3[] = Array.from({ length: 6 }, () => new THREE.Vector3())
+const _scratchEdgeSet = new Set<number>()
+const _scratchCentroid = new THREE.Vector3()
+const _scratchDa = new THREE.Vector3()
+const _scratchDb = new THREE.Vector3()
+const _angles: number[] = [0, 0, 0, 0, 0, 0]
+
 /** Geometry pre-built for each cube edge (positions never change) */
 const EDGE_GEOMETRIES = CUBE_EDGES.map(([A, B]) => {
   const positions = new Float32Array([A.x, A.y, A.z, B.x, B.y, B.z])
@@ -70,14 +78,15 @@ function computeK(elapsed: number): { k: number; holding: boolean } {
 /**
  * Compute where the plane x+y+z=k intersects the 12 cube edges.
  * Uses open interval (t > ε, t < 1-ε) to avoid double-counting shared corners.
- * Returns sorted convex polygon vertices and the set of intersected edge indices.
+ * Results are written into module-level scratch buffers (_scratchPoints, _scratchCentroid).
+ * Returns count of intersection points and the set of intersected edge indices.
  */
 function computeIntersection(k: number): {
-  points: THREE.Vector3[]
+  count: number
   edgeIndices: Set<number>
 } {
-  const points: THREE.Vector3[] = []
-  const edgeIndices = new Set<number>()
+  _scratchEdgeSet.clear()
+  let count = 0
   const EPS = 1e-10
 
   for (let i = 0; i < CUBE_EDGES.length; i++) {
@@ -86,26 +95,44 @@ function computeIntersection(k: number): {
     if (Math.abs(denom) < EPS) continue
     const t = (k - (A.x + A.y + A.z)) / denom
     if (t > EPS && t < 1 - EPS) {
-      points.push(A.clone().lerp(B, t))
-      edgeIndices.add(i)
+      _scratchPoints[count].set(
+        A.x + t * (B.x - A.x),
+        A.y + t * (B.y - A.y),
+        A.z + t * (B.z - A.z),
+      )
+      _scratchEdgeSet.add(i)
+      count++
     }
   }
 
-  if (points.length < 3) return { points, edgeIndices }
+  if (count >= 3) {
+    // Compute centroid
+    _scratchCentroid.set(0, 0, 0)
+    for (let i = 0; i < count; i++) _scratchCentroid.add(_scratchPoints[i])
+    _scratchCentroid.divideScalar(count)
 
-  // Sort as convex polygon using angle around centroid projected onto the plane
-  const centroid = new THREE.Vector3()
-  points.forEach(p => centroid.add(p))
-  centroid.divideScalar(points.length)
+    // Compute angle for each point
+    for (let i = 0; i < count; i++) {
+      _scratchDa.copy(_scratchPoints[i]).sub(_scratchCentroid)
+      _angles[i] = Math.atan2(_scratchDa.dot(BASIS_V), _scratchDa.dot(BASIS_U))
+    }
 
-  points.sort((a, b) => {
-    const da = a.clone().sub(centroid)
-    const db = b.clone().sub(centroid)
-    return Math.atan2(da.dot(BASIS_V), da.dot(BASIS_U))
-         - Math.atan2(db.dot(BASIS_V), db.dot(BASIS_U))
-  })
+    // Insertion sort by angle (avoids Array.sort overhead for 3-6 elements)
+    for (let i = 1; i < count; i++) {
+      const keyAngle = _angles[i]
+      _scratchDb.copy(_scratchPoints[i])
+      let j = i - 1
+      while (j >= 0 && _angles[j] > keyAngle) {
+        _angles[j + 1] = _angles[j]
+        _scratchPoints[j + 1].copy(_scratchPoints[j])
+        j--
+      }
+      _angles[j + 1] = keyAngle
+      _scratchPoints[j + 1].copy(_scratchDb)
+    }
+  }
 
-  return { points, edgeIndices }
+  return { count, edgeIndices: _scratchEdgeSet }
 }
 
 // ── Per-instance Three.js objects ───────────────────────────────────────────
@@ -158,18 +185,33 @@ function Scene({ paused }: { paused: boolean }) {
   // Vertex dots: 6 pre-allocated mesh refs
   const dotRefs = useRef<(THREE.Mesh | null)[]>(Array(6).fill(null))
 
+  // Pause-safe elapsed time: only advances when not paused
+  const manualElapsed = useRef(0)
+  const lastTime = useRef<number | null>(null)
+
   useFrame(({ clock }) => {
+    const now = clock.getElapsedTime()
+    if (!paused && groupRef.current) {
+      if (lastTime.current !== null) {
+        manualElapsed.current += now - lastTime.current
+      }
+      lastTime.current = now
+    } else {
+      // Keep lastTime updated so the first unpaused frame doesn't add stale delta
+      lastTime.current = now
+    }
+
     if (paused || !groupRef.current) return
 
-    const elapsed = clock.getElapsedTime()
+    const elapsed = manualElapsed.current
 
     // Rotate entire group — intersection math stays in local space
     groupRef.current.rotation.y += 0.004
     groupRef.current.rotation.x = Math.sin(elapsed * 0.12) * 0.15
 
     const { k, holding } = computeK(elapsed)
-    const { points, edgeIndices } = computeIntersection(k)
-    const n = points.length
+    const { count, edgeIndices } = computeIntersection(k)
+    const n = count
 
     // Update edge highlight colors
     for (let i = 0; i < 12; i++) {
@@ -191,25 +233,22 @@ function Scene({ paused }: { paused: boolean }) {
 
     // Outline: write n points + closing repeat
     for (let i = 0; i < n; i++) {
-      obj.outlinePos[i * 3]     = points[i].x
-      obj.outlinePos[i * 3 + 1] = points[i].y
-      obj.outlinePos[i * 3 + 2] = points[i].z
+      obj.outlinePos[i * 3]     = _scratchPoints[i].x
+      obj.outlinePos[i * 3 + 1] = _scratchPoints[i].y
+      obj.outlinePos[i * 3 + 2] = _scratchPoints[i].z
     }
-    obj.outlinePos[n * 3]     = points[0].x
-    obj.outlinePos[n * 3 + 1] = points[0].y
-    obj.outlinePos[n * 3 + 2] = points[0].z
+    obj.outlinePos[n * 3]     = _scratchPoints[0].x
+    obj.outlinePos[n * 3 + 1] = _scratchPoints[0].y
+    obj.outlinePos[n * 3 + 2] = _scratchPoints[0].z
     ;(obj.outlineGeo.getAttribute('position') as THREE.BufferAttribute).needsUpdate = true
     obj.outlineGeo.setDrawRange(0, n + 1)
 
-    // Fill: triangle fan from centroid
-    const centroid = new THREE.Vector3()
-    points.forEach(p => centroid.add(p))
-    centroid.divideScalar(n)
+    // Fill: triangle fan from centroid (reuse _scratchCentroid already computed)
     let idx = 0
     for (let i = 0; i < n - 2; i++) {
-      obj.fillPos[idx++] = centroid.x;    obj.fillPos[idx++] = centroid.y;    obj.fillPos[idx++] = centroid.z
-      obj.fillPos[idx++] = points[i].x;   obj.fillPos[idx++] = points[i].y;   obj.fillPos[idx++] = points[i].z
-      obj.fillPos[idx++] = points[i+1].x; obj.fillPos[idx++] = points[i+1].y; obj.fillPos[idx++] = points[i+1].z
+      obj.fillPos[idx++] = _scratchCentroid.x;          obj.fillPos[idx++] = _scratchCentroid.y;          obj.fillPos[idx++] = _scratchCentroid.z
+      obj.fillPos[idx++] = _scratchPoints[i].x;         obj.fillPos[idx++] = _scratchPoints[i].y;         obj.fillPos[idx++] = _scratchPoints[i].z
+      obj.fillPos[idx++] = _scratchPoints[i + 1].x;     obj.fillPos[idx++] = _scratchPoints[i + 1].y;     obj.fillPos[idx++] = _scratchPoints[i + 1].z
     }
     ;(obj.fillGeo.getAttribute('position') as THREE.BufferAttribute).needsUpdate = true
     obj.fillGeo.setDrawRange(0, (n - 2) * 3)
@@ -221,7 +260,7 @@ function Scene({ paused }: { paused: boolean }) {
       if (!dot) continue
       if (i < n) {
         dot.visible = true
-        dot.position.copy(points[i])
+        dot.position.copy(_scratchPoints[i])
         ;(dot.material as THREE.MeshBasicMaterial).opacity = dotOpacity
       } else {
         dot.visible = false
