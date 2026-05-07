@@ -246,10 +246,10 @@ function Scene({ paused }: { paused: boolean }) {
     ;(obj.outlineGeo.getAttribute('position') as THREE.BufferAttribute).needsUpdate = true
     obj.outlineGeo.setDrawRange(0, n + 1)
 
-    // Fill: triangle fan from centroid (reuse _scratchCentroid already computed)
+    // Fill: triangle fan from p0 (n-2 triangles covers full convex polygon)
     let idx = 0
-    for (let i = 0; i < n - 2; i++) {
-      obj.fillPos[idx++] = _scratchCentroid.x;          obj.fillPos[idx++] = _scratchCentroid.y;          obj.fillPos[idx++] = _scratchCentroid.z
+    for (let i = 1; i < n - 1; i++) {
+      obj.fillPos[idx++] = _scratchPoints[0].x;         obj.fillPos[idx++] = _scratchPoints[0].y;         obj.fillPos[idx++] = _scratchPoints[0].z
       obj.fillPos[idx++] = _scratchPoints[i].x;         obj.fillPos[idx++] = _scratchPoints[i].y;         obj.fillPos[idx++] = _scratchPoints[i].z
       obj.fillPos[idx++] = _scratchPoints[i + 1].x;     obj.fillPos[idx++] = _scratchPoints[i + 1].y;     obj.fillPos[idx++] = _scratchPoints[i + 1].z
     }
