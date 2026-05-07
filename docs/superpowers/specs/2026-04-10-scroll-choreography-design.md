@@ -1,6 +1,6 @@
 # Round 5 — Scroll Choreography Design Spec
 **Date:** 2026-04-10
-**Status:** Approved
+**Status:** Completed (implemented)
 
 ---
 

@@ -1,5 +1,7 @@
 # Step 1: Work Section 3-Card Grid Implementation Plan
 
+**Status:** Completed (implemented)
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Update the Work section from a 2-card grid to a 3-card grid (adding Pythagorean Theorem), refactor `ModuleCard` to support optional hrefs and lab guide links, suppress disabled-card hover effects, and update the StatStrip anchor stat.

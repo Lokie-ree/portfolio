@@ -1,5 +1,7 @@
 # Round 2 — Hero Canvas Upgrade Implementation Plan
 
+**Status:** Completed (implemented)
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Upgrade HeroCanvas with depth-based polygon opacity, a staggered GSAP entrance animation (opacity + z-rise), a pixelRatio performance cap, and a CSS ambient glow behind the canvas.

@@ -15,13 +15,14 @@ Package manager is pnpm (pnpm-lock.yaml present), but the scripts above work wit
 
 ## Architecture
 
-Single-page portfolio app. All content lives in `src/App.tsx` as self-contained section components (`WorkSection`, `SystemSection`, `AboutSection`, `PelicanSection`, `ISTESection`, `ContactSection`). No router.
+Single-page portfolio app. All content lives in `src/App.tsx` as self-contained section components (`WorkSection`, `LiveDemoSection`, `SystemSection`, `AboutSection`, `PelicanSection`, `ISTESection`, `ContactSection`, `Footer`). No router.
 
 **Three.js layer** — Three separate React Three Fiber `<Canvas>` roots (R3F 9 + Three.js ~0.183):
 - `HeroCanvas` — full-viewport canvas positioned `absolute inset-0` behind hero text; animated wireframe polygons with parallax mouse tracking via `ParallaxCamera`; GSAP entrance on polygon opacity and z; CSS `.hero-glow`; DPR capped with `dpr={Math.min(window.devicePixelRatio, 2)}` on `<Canvas>`.
 - `RigidMotionsPreview` — `useRef<THREE.Group>`, animates `position.x` in `useFrame`. Two triangles (pre-image ink + reflected amber) oscillating across a reflection axis.
 - `DilationsPreview` — `useRef<THREE.Group>`, animates `scale.setScalar(k)`. Origin dot + dilation rays + pre-image + dilated amber image.
 - `PythagoreanTheoremPreview` — single `useRef<THREE.Group>` wrapping all geometry (triangle, right angle marker, three squares). Scale animation pulses the whole composition. Canvas sprite labels (a², b², c²) via `THREE.Sprite` + `CanvasTexture` — no troika-three-text dependency.
+- `CrossSectionPreview` — wireframe cube + oscillating amber cutting plane + synced hexagon outline opacity pulse, used in `LiveDemoSection`.
 
 All three preview components are lazy-loaded via `React.lazy` + `Suspense`. Each is embedded in `ModuleCard` which passes `paused={hovered}` via `cloneElement`.
 
@@ -39,16 +40,17 @@ All three preview components are lazy-loaded via `React.lazy` + `Suspense`. Each
 
 ## Build status
 
-Pre-ISTE implementation in progress. Branch strategy: feature branches → PR → merge to master.
+Pre-ISTE implementation is near-final. Branch strategy: feature branches → PR → merge to master.
 
 **Completed:**
 - Rounds 1–8 (initial commit): dark palette, hero canvas, module cards, stat strip, GSAP scroll choreography, ISTE section, mobile pass, lazy R3F + Vite chunking
 - Step 1: Work section 3-card grid — Pythagorean Theorem card, `ModuleCard` refactor, stat strip update
 - Step 2: The System section — two-row layer stack grid with scroll entrance
+- Step 4: Live Demo section — `LiveDemoSection` + `CrossSectionPreview`
+- Spec-gap items implemented in app: scroll progress bar, footer, hero proof pill glow, nav hover color transition, 3-act About narrative
 
 **Remaining:**
 - Step 3: Act Break between Work and System sections
-- Step 4: Live Demo section (blocked — demo component not yet built)
 - Step 5: Vercel deploy (copy review is a manual human task before deploy)
 
 ## Pre-existing lint errors

@@ -1,7 +1,7 @@
 # Portfolio — Creative Direction
 
-**Last updated:** April 2026  
-**Status:** Pre-build. This document is the brief. Nothing gets built until this is internalized.
+**Last updated:** May 2026  
+**Status:** In implementation. Core sections and live demo are shipped; act break + deploy copy review remain.
 
 ---
 
@@ -10,6 +10,11 @@
 This is not a portfolio. It's a proof of concept. The visitor should feel the work before they read about it. By the time they reach the About section, they should already believe.
 
 **One sentence brief:** Make an ISTE educator stop walking.
+
+### Build Progress Snapshot
+
+- Completed: dark palette migration, hero canvas upgrades, scroll choreography, stat strip, ISTE grid treatment, responsive pass, Work 3-card grid, System section, Live Demo section
+- Remaining before deployment: Act Break between Work and System, final copy review, Vercel deploy
 
 ---
 

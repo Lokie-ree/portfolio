@@ -10,6 +10,11 @@ Portfolio site for an interactive learning designer. Built with React 19 + Three
 - **Tailwind CSS v4** — utility classes + CSS design tokens
 - **Google Fonts** — Fraunces (display) + DM Sans (body)
 
+## Current Status
+
+- Completed: Work 3-card grid, Live Demo section, System section, About 3-act narrative, ISTE coordinate grid treatment, scroll choreography, responsive pass
+- Remaining: Act Break section between Work and System, final copy review, deployment
+
 ## Getting Started
 
 ```bash
@@ -28,6 +33,7 @@ src/
     RigidMotionsPreview.tsx      # R3F scene — reflection animation
     DilationsPreview.tsx         # R3F scene — dilation scale animation
     PythagoreanTheoremPreview.tsx # R3F scene — three squares, unified scale pulse
+    CrossSectionPreview.tsx       # R3F scene — cube slicing demo preview
     ModuleCard.tsx               # Card with embedded R3F preview + hover state
     StatStrip.tsx                # Animated stat counters (IntersectionObserver)
     CoordGridBackground.tsx      # SVG coordinate grid for ISTE section

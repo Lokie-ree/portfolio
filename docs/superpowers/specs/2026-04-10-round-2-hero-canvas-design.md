@@ -1,6 +1,6 @@
 # Round 2 — Hero Canvas Upgrade Design
 
-**Status:** Approved  
+**Status:** Completed (implemented)  
 **Source spec:** `docs/CREATIVE_DIRECTION.md § Hero Canvas — Revised Spec` and `§ Ambient Glow`  
 **Build order ref:** `docs/BUILD_ORDER.md Round 2`
 

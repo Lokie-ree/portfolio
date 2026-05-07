@@ -209,3 +209,39 @@ export function useContactUnderline<T extends HTMLElement>(ref: RefObject<T | nu
     return () => ctx.revert()
   }, [ref])
 }
+
+/**
+ * Animate the act break text and rule on scroll entry.
+ * Targets .act-break-text (opacity + y) and .act-break-rule (opacity only).
+ * 0.6s delay on text — the beat of silence before the reveal.
+ * Uses useEffect (not useLayoutEffect) — ScrollTrigger needs post-paint layout.
+ */
+export function useActBreakReveal<T extends HTMLElement>() {
+  const ref = useRef<T>(null)
+
+  useEffect(() => {
+    if (!ref.current) return
+    const text = ref.current.querySelector<HTMLElement>('.act-break-text')
+    const rule = ref.current.querySelector<HTMLElement>('.act-break-rule')
+    if (!text || !rule) return
+
+    const ctx = gsap.context(() => {
+      gsap.set([text, rule], { opacity: 0 })
+      gsap.set(text, { y: 20 })
+
+      ScrollTrigger.create({
+        trigger: ref.current,
+        start: 'top 80%',
+        once: true,
+        onEnter: () => {
+          gsap.to(text, { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out', delay: 0.6 })
+          gsap.to(rule,  { opacity: 1, duration: 0.3, delay: 1.0 })
+        },
+      })
+    }, ref)
+
+    return () => ctx.revert()
+  }, [])
+
+  return ref
+}

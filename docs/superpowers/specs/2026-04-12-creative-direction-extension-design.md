@@ -1,6 +1,6 @@
 # Creative Direction Extension
 **Date:** April 12, 2026  
-**Status:** Approved for implementation  
+**Status:** Partially completed (implemented through Step 4; Act Break and post-ISTE scope remain)  
 **Phases:** Pre-ISTE (ships before June 28) · Post-ISTE (specced now, built after)
 
 ---
