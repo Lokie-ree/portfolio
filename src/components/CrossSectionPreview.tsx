@@ -227,7 +227,10 @@ function Scene({ paused }: { paused: boolean }) {
     if (n < 3) {
       obj.outlineGeo.setDrawRange(0, 0)
       obj.fillGeo.setDrawRange(0, 0)
-      dotRefs.current.forEach(d => d && (d.visible = false))
+      for (let i = 0; i < dotRefs.current.length; i++) {
+        const d = dotRefs.current[i]
+        if (d) d.visible = false
+      }
       return
     }
 
