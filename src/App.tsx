@@ -429,8 +429,8 @@ export default function App() {
           </div>
         </div>
 
-        <WorkSection />
         <LiveDemoSection />
+        <WorkSection />
         <SystemSection />
         <AboutSection />
         <PelicanSection />
