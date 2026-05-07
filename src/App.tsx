@@ -31,12 +31,13 @@ function SectionLabel({ children }: { children: string }) {
 }
 
 type SystemModule = { name: string; standard: string; href?: string }
-type SystemRow = { layerName: string; repoName: string; modules: SystemModule[] }
+type SystemRow = { layerName: string; repoName: string; description: string; modules: SystemModule[] }
 
 const SYSTEM_ROWS: SystemRow[] = [
   {
     layerName: 'Interactive',
     repoName: 'creative-lab',
+    description: 'Browser-based 3D modules students manipulate before they see formulas.',
     modules: [
       { name: 'Rigid Motions',         standard: '8.G.A.1–3', href: 'https://creative-lab-five.vercel.app' },
       { name: 'Dilations & Similarity', standard: '8.G.A.3–5', href: 'https://creative-lab-five.vercel.app' },
@@ -46,6 +47,7 @@ const SYSTEM_ROWS: SystemRow[] = [
   {
     layerName: 'Lab Guide',
     repoName: 'iste-26',
+    description: 'Print-ready student handout that mirrors the interactive sequence.',
     modules: [
       { name: 'Rigid Motions',         standard: '8.G.A.1–3' },
       { name: 'Dilations & Similarity', standard: '8.G.A.3–5' },
@@ -69,7 +71,7 @@ function WorkSection() {
           standard="8.G.A.1–3 · Grade 8 Geometry"
           description="Translations, reflections, and rotations through a predict-and-reveal loop. Formula appears after demonstrated understanding — never before."
           href="https://creative-lab-five.vercel.app"
-          preview={<Suspense fallback={<div style={{ minHeight: 200, background: 'var(--color-surface)' }} />}><RigidMotionsPreview paused={false} /></Suspense>}
+          preview={<RigidMotionsPreview paused={false} />}
         />
         <ModuleCard
           status="Live — Complete"
@@ -77,7 +79,7 @@ function WorkSection() {
           standard="8.G.A.3–5 · Grade 8 Geometry"
           description="Scale factor to AA criterion across 14 rounds and 4 phases. Students prove triangle similarity before they're told what similarity means."
           href="https://creative-lab-five.vercel.app"
-          preview={<Suspense fallback={<div style={{ minHeight: 200, background: 'var(--color-surface)' }} />}><DilationsPreview paused={false} /></Suspense>}
+          preview={<DilationsPreview paused={false} />}
         />
         <ModuleCard
           status="Live — Complete"
@@ -85,11 +87,7 @@ function WorkSection() {
           standard="8.G.B.7–8 · Grade 8 Geometry"
           description="Area-first proof of the theorem. Students discover a² + b² = c² through three animated squares before the algebraic statement appears."
           href="https://creative-lab-five.vercel.app"
-          preview={
-            <Suspense fallback={<div style={{ minHeight: 200, background: 'var(--color-surface)' }} />}>
-              <PythagoreanTheoremPreview paused={false} />
-            </Suspense>
-          }
+          preview={<PythagoreanTheoremPreview paused={false} />}
         />
       </div>
 
@@ -182,6 +180,9 @@ function SystemSection() {
   return (
     <section ref={ref} className={sectionClass}>
       <SectionLabel>The System</SectionLabel>
+      <p className="reveal-target mb-8 max-w-lg text-[14px] leading-relaxed text-muted">
+        Two repos. Two delivery surfaces. Six modules built to the same pedagogical spec — challenge before explanation, every time.
+      </p>
       <div className="flex flex-col gap-px border border-rule bg-rule">
         {SYSTEM_ROWS.map((row) => (
           <div
@@ -192,6 +193,7 @@ function SystemSection() {
             <div className="border-l-[3px] border-l-amber bg-surface px-4 py-5">
               <p className="text-[12px] font-semibold text-amber">{row.layerName}</p>
               <p className="mt-0.5 text-[10px] text-muted">{row.repoName}</p>
+              <p className="mt-3 text-[11px] leading-relaxed text-muted">{row.description}</p>
             </div>
 
             {/* Module cells */}
@@ -200,6 +202,10 @@ function SystemSection() {
                 key={mod.name}
                 className="bg-surface px-4 py-5 transition-colors duration-150 hover:bg-surface-hi"
               >
+                <div className="mb-2 flex items-center gap-1.5">
+                  <span className={`block size-1.5 rounded-full ${mod.href ? 'bg-amber' : 'bg-rule'}`} />
+                  <span className="text-[10px] uppercase tracking-wide text-muted">{mod.href ? 'Live' : 'Draft'}</span>
+                </div>
                 <p className="text-[13px] font-normal text-ink">{mod.name}</p>
                 <p className="mt-0.5 text-[11px] text-muted">{mod.standard}</p>
                 {mod.href && (
@@ -209,7 +215,7 @@ function SystemSection() {
                     rel="noopener noreferrer"
                     className="mt-3 inline-block text-[11px] text-amber no-underline transition-colors hover:underline"
                   >
-                    Live →
+                    Open →
                   </a>
                 )}
               </div>
@@ -286,6 +292,14 @@ function PelicanSection() {
             An AI coaching layer for Louisiana teachers — built on the LSSM, LER, and LEADS
             frameworks. Standards-aligned planning that works the way teachers actually think.
           </p>
+          <a
+            href="https://pelicanai.org"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-4 inline-block text-[13px] text-amber no-underline transition-colors hover:underline"
+          >
+            pelicanai.org →
+          </a>
         </div>
       </div>
     </section>

@@ -1,4 +1,4 @@
-import { useState, cloneElement, type ReactElement } from 'react'
+import { useState, cloneElement, Suspense, type ReactElement } from 'react'
 
 interface ModuleCardProps {
   status: string
@@ -23,10 +23,6 @@ export function ModuleCard({
 }: ModuleCardProps) {
   const [hovered, setHovered] = useState(false)
 
-  const previewEl = preview
-    ? cloneElement(preview, { paused: hovered })
-    : <div className="min-h-[200px] bg-surface" />
-
   return (
     <div
       data-disabled={disabled ? 'true' : undefined}
@@ -40,7 +36,13 @@ export function ModuleCard({
       <div className="h-[3px] w-full shrink-0 bg-amber-dim" />
 
       <div className="relative z-10 h-[260px] w-full opacity-60 transition-opacity duration-300 group-hover:opacity-100">
-        {previewEl}
+        {preview ? (
+          <Suspense fallback={<div style={{ height: '100%', background: 'var(--color-surface)' }} />}>
+            {cloneElement(preview, { paused: hovered })}
+          </Suspense>
+        ) : (
+          <div className="min-h-[200px] bg-surface" />
+        )}
       </div>
 
       <div className="relative z-10 border-t border-rule px-6 pt-5 pb-6">

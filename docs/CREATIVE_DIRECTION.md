@@ -1,7 +1,7 @@
 # Portfolio — Creative Direction
 
 **Last updated:** May 2026  
-**Status:** In implementation. Core sections and live demo are shipped; act break + deploy copy review remain.
+**Status:** Feature-complete. All sections implemented and verified; final copy review and Vercel deploy remain.
 
 ---
 
@@ -13,8 +13,8 @@ This is not a portfolio. It's a proof of concept. The visitor should feel the wo
 
 ### Build Progress Snapshot
 
-- Completed: dark palette migration, hero canvas upgrades, scroll choreography, stat strip, ISTE grid treatment, responsive pass, Work 3-card grid, System section, Live Demo section
-- Remaining before deployment: Act Break between Work and System, final copy review, Vercel deploy
+- Completed: dark palette migration, hero canvas upgrades, scroll choreography, stat strip, ISTE grid treatment, responsive pass, Work 3-card grid, System section, Live Demo section, Act Break section, CrossSectionPreview live intersection geometry, System section enrichment (descriptions + status dots), Pelican AI link, Hero lint resolution, Work card hover-pause fix
+- Remaining before deployment: final copy review (About origin narrative, Act Break copy), Vercel deploy
 
 ---
 
