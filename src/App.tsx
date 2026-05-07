@@ -1,6 +1,6 @@
 import { useRef, lazy, Suspense, useState } from 'react'
 import { ModuleCard } from '@/components/ModuleCard'
-import { useScrollReveal, useNavReveal, useHeroEntrance, useProofBlockReveal, useISTEEntrance, useContactUnderline, useScrollProgress } from '@/hooks/useScrollReveal'
+import { useScrollReveal, useNavReveal, useHeroEntrance, useProofBlockReveal, useISTEEntrance, useContactUnderline, useScrollProgress, useActBreakReveal } from '@/hooks/useScrollReveal'
 import { StatStrip } from '@/components/StatStrip'
 import { CoordGridBackground } from '@/components/CoordGridBackground'
 
@@ -159,6 +159,21 @@ function LiveDemoSection() {
         </div>
       </div>
     </section>
+  )
+}
+
+function ActBreakSection() {
+  const ref = useActBreakReveal<HTMLDivElement>()
+  return (
+    <div ref={ref} className="py-20 text-center">
+      <p
+        className="act-break-text font-display font-light italic text-amber"
+        style={{ fontSize: 'clamp(20px, 3vw, 28px)' }}
+      >
+        Now you know what it feels like. Here&rsquo;s how it works.
+      </p>
+      <div className="act-break-rule mt-8 h-px w-10 bg-rule mx-auto" />
+    </div>
   )
 }
 
@@ -431,6 +446,7 @@ export default function App() {
 
         <LiveDemoSection />
         <WorkSection />
+        <ActBreakSection />
         <SystemSection />
         <AboutSection />
         <PelicanSection />
