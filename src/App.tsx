@@ -411,11 +411,25 @@ export default function App() {
         id="site-nav"
         className="fixed top-0 left-1/2 z-50 flex w-full max-w-[1152px] -translate-x-1/2 items-center justify-between gap-3 border-b border-rule bg-ground/92 px-8 py-4 backdrop-blur-md md:px-6"
       >
-        <span className="shrink-0 font-display text-[15px] font-normal max-[380px]:text-sm">
-          Randall LaPoint, Jr.
-        </span>
+        <a href="#" aria-label="Home" className="flex shrink-0 items-center gap-[10px] text-ink no-underline">
+          <svg width="26" height="26" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+            <polygon points="90,50 70,84.64 30,84.64 10,50 30,15.36 70,15.36" stroke="#d4962a" strokeWidth="2.5" strokeLinejoin="round" fill="#d4962a" fillOpacity="0.07" />
+            <line x1="90" y1="50" x2="10" y2="50" stroke="#d4962a" strokeWidth="0.9" opacity="0.35" />
+            <line x1="70" y1="84.64" x2="30" y2="15.36" stroke="#d4962a" strokeWidth="0.9" opacity="0.35" />
+            <line x1="30" y1="84.64" x2="70" y2="15.36" stroke="#d4962a" strokeWidth="0.9" opacity="0.35" />
+            <circle cx="90" cy="50" r="2.6" fill="#d4962a" opacity="0.8" />
+            <circle cx="70" cy="84.64" r="2.6" fill="#d4962a" opacity="0.8" />
+            <circle cx="30" cy="84.64" r="2.6" fill="#d4962a" opacity="0.8" />
+            <circle cx="10" cy="50" r="2.6" fill="#d4962a" opacity="0.8" />
+            <circle cx="30" cy="15.36" r="2.6" fill="#d4962a" opacity="0.8" />
+            <circle cx="70" cy="15.36" r="2.6" fill="#d4962a" opacity="0.8" />
+          </svg>
+          <span className="hidden min-[521px]:inline font-display text-[15px] font-normal">
+            Randall LaPoint, Jr.
+          </span>
+        </a>
         <ul className="flex list-none gap-4 min-[521px]:gap-6">
-          {(['work', 'about', 'contact'] as const).map((id) => (
+          {(['work', 'about'] as const).map((id) => (
             <li key={id}>
               <a
                 href={`#${id}`}
