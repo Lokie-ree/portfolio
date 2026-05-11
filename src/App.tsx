@@ -1,6 +1,6 @@
 import { useRef, lazy, Suspense, useState } from 'react'
 import { ModuleCard } from '@/components/ModuleCard'
-import { useScrollReveal, useNavReveal, useHeroEntrance, useProofBlockReveal, useISTEEntrance, useContactUnderline, useScrollProgress, useActBreakReveal } from '@/hooks/useScrollReveal'
+import { useScrollReveal, useNavReveal, useHeroEntrance, useProofBlockReveal, useISTEEntrance, useScrollProgress, useActBreakReveal } from '@/hooks/useScrollReveal'
 import { StatStrip } from '@/components/StatStrip'
 import { CoordGridBackground } from '@/components/CoordGridBackground'
 
@@ -37,7 +37,7 @@ const SYSTEM_ROWS: SystemRow[] = [
   {
     layerName: 'Interactive',
     repoName: 'creative-lab',
-    description: 'Browser-based 3D modules students manipulate before they see formulas.',
+    description: 'Students touch the geometry. Predict, test, observe patterns. The algebraic rule appears after they\'ve already seen why it\'s true.',
     modules: [
       { name: 'Rigid Motions',         standard: '8.G.A.1–3', href: 'https://creative-lab-five.vercel.app' },
       { name: 'Dilations & Similarity', standard: '8.G.A.3–5', href: 'https://creative-lab-five.vercel.app' },
@@ -47,7 +47,7 @@ const SYSTEM_ROWS: SystemRow[] = [
   {
     layerName: 'Lab Guide',
     repoName: 'iste-26',
-    description: 'Print-ready student handout that mirrors the interactive sequence.',
+    description: 'Teacher and student companion — predict prompts, sketch space, capstone tasks. Runs alongside the interactive, not instead of it.',
     modules: [
       { name: 'Rigid Motions',         standard: '8.G.A.1–3' },
       { name: 'Dilations & Similarity', standard: '8.G.A.3–5' },
@@ -181,7 +181,7 @@ function SystemSection() {
     <section ref={ref} className={sectionClass}>
       <SectionLabel>The System</SectionLabel>
       <p className="reveal-target mb-8 max-w-lg text-[14px] leading-relaxed text-muted">
-        Two repos. Two delivery surfaces. Six modules built to the same pedagogical spec — challenge before explanation, every time.
+        Three modules. Each pairs a browser-based interactive with a printed lab guide — students manipulate the geometry first, the formula arrives as confirmation.
       </p>
       <div className="flex flex-col gap-px border border-rule bg-rule">
         {SYSTEM_ROWS.map((row) => (
@@ -241,7 +241,7 @@ const ABOUT_ACTS = [
   },
   {
     hook: "Now I build the tools that scale that insight.",
-    body: "React Three Fiber. GSAP. Real 8th graders twice a week. Every module is tested until the behavior confirms the design. The goal: interactive experiences that make hard ideas feel obvious — in retrospect.",
+    body: "Real 8th graders, twice a week. When a student calls it \"sick,\" the design works. That's the validation standard — not a rubric, not a survey. Behavior.",
     accentClass: 'bg-muted',
   },
 ]
@@ -360,26 +360,6 @@ function ISTESection() {
   )
 }
 
-function ContactSection() {
-  const ref = useScrollReveal<HTMLElement>()  // handles "Contact" label
-  useContactUnderline(ref)                    // handles underline draw (shares same ref)
-  return (
-    <section ref={ref} id="contact" className="pt-14 pb-20">
-      <p className="reveal-target mb-10 text-[11px] font-medium uppercase tracking-[0.14em] text-muted">
-        Contact
-      </p>
-      <div className="reveal-target inline-block relative">
-        <a
-          href="mailto:rplapointjr@gmail.com"
-          className="font-display text-[clamp(24px,4vw,36px)] font-light text-ink no-underline transition-colors hover:text-amber"
-        >
-          rplapointjr@gmail.com
-        </a>
-        <span className="contact-underline absolute bottom-0 left-0 h-px w-full bg-amber" />
-      </div>
-    </section>
-  )
-}
 
 function Footer() {
   return (
@@ -465,7 +445,6 @@ export default function App() {
         <AboutSection />
         <PelicanSection />
         <ISTESection />
-        <ContactSection />
         <Footer />
       </main>
     </>

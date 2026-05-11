@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, type RefObject } from 'react'
+import { useEffect, useLayoutEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
@@ -184,31 +184,6 @@ export function useScrollProgress() {
   }, [])
 }
 
-/**
- * Draw the contact email underline left-to-right via GSAP scaleX tween.
- * Accepts an existing RefObject rather than creating a new one — avoids
- * dual-ref attachment on the same <section> element.
- * The ref dep in useEffect is stable (useRef identity never changes).
- */
-export function useContactUnderline<T extends HTMLElement>(ref: RefObject<T | null>) {
-  useEffect(() => {
-    if (!ref.current) return
-    const underline = ref.current.querySelector<HTMLElement>('.contact-underline')
-    if (!underline) return
-
-    const ctx = gsap.context(() => {
-      gsap.set(underline, { scaleX: 0, transformOrigin: 'left center' })
-      gsap.to(underline, {
-        scaleX: 1,
-        duration: 0.6,
-        ease: 'power2.out',
-        scrollTrigger: { trigger: ref.current, start: 'top 75%', once: true },
-      })
-    }, ref)
-
-    return () => ctx.revert()
-  }, [ref])
-}
 
 /**
  * Animate the act break text and rule on scroll entry.
