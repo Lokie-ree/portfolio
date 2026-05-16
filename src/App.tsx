@@ -148,6 +148,10 @@ function LiveDemoSection() {
                 Then revolve a silhouette and watch the same structure appear from a different
                 direction. Two operations. One underlying geometry. That connection is the lesson.
               </p>
+              <p>
+                Built as a standalone demo — the geometry that lives outside the 8.G sequence and
+                demanded its own exploration.
+              </p>
             </div>
             <a
               href="https://creative-lab-demos.vercel.app"
