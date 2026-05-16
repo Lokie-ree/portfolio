@@ -37,7 +37,7 @@ const SYSTEM_ROWS: SystemRow[] = [
   {
     layerName: 'Interactive',
     repoName: 'creative-lab',
-    description: 'Students touch the geometry. Predict, test, observe patterns. The algebraic rule appears after they\'ve already seen why it\'s true.',
+    description: 'Students touch the geometry. Challenge before explanation — the algebraic rule appears only after they\'ve seen why it\'s true. Conceptual understanding first, procedural fluency as confirmation.',
     modules: [
       { name: 'Rigid Motions',         standard: '8.G.A.1–3', href: 'https://creative-lab-five.vercel.app' },
       { name: 'Dilations & Similarity', standard: '8.G.A.3–5', href: 'https://creative-lab-five.vercel.app' },
@@ -47,7 +47,7 @@ const SYSTEM_ROWS: SystemRow[] = [
   {
     layerName: 'Lab Guide',
     repoName: 'iste-26',
-    description: 'Teacher and student companion — predict prompts, sketch space, capstone tasks. Runs alongside the interactive, not instead of it.',
+    description: 'The reflective layer alongside the interactive — predict prompts before, sketch space during, synthesis tasks after. Students build the concept; the lab guide names what they built.',
     modules: [
       { name: 'Rigid Motions',         standard: '8.G.A.1–3' },
       { name: 'Dilations & Similarity', standard: '8.G.A.3–5' },
@@ -69,7 +69,7 @@ function WorkSection() {
           status="Live — Complete"
           title="Rigid Motions"
           standard="8.G.A.1–3 · Grade 8 Geometry"
-          description="Translations, reflections, and rotations through a predict-and-reveal loop. Formula appears after demonstrated understanding — never before."
+          description="Students predict each rigid motion, watch the image land, then reconcile with what they expected — formal vocabulary for congruence arrives after the motion is something they've already done, not a list to memorize first."
           href="https://creative-lab-five.vercel.app"
           preview={<RigidMotionsPreview paused={false} />}
         />
@@ -77,7 +77,7 @@ function WorkSection() {
           status="Live — Complete"
           title="Dilations & Similarity"
           standard="8.G.A.3–5 · Grade 8 Geometry"
-          description="Scale factor to AA criterion across 14 rounds and 4 phases. Students prove triangle similarity before they're told what similarity means."
+          description="Students move from scale factor through visual argument to the AA criterion — they justify similarity from what the figures show before the textbook definition names it for them."
           href="https://creative-lab-five.vercel.app"
           preview={<DilationsPreview paused={false} />}
         />
@@ -85,7 +85,7 @@ function WorkSection() {
           status="Live — Complete"
           title="Pythagorean Theorem"
           standard="8.G.B.7–8 · Grade 8 Geometry"
-          description="Area-first proof of the theorem. Students discover a² + b² = c² through three animated squares before the algebraic statement appears."
+          description="Students build the area proof themselves — the algebraic statement only appears after they've already seen why it's true. Formula as reward, not starting point."
           href="https://creative-lab-five.vercel.app"
           preview={<PythagoreanTheoremPreview paused={false} />}
         />
@@ -142,9 +142,13 @@ function LiveDemoSection() {
             <p className="mb-2 font-display text-[22px] font-normal leading-tight text-ink">
               Cross-Section Explorer
             </p>
-            <p className="mb-5 text-[13px] leading-relaxed text-muted">
-              Drag a plane through a cube. Watch the slice become a hexagon.
-            </p>
+            <div className="mb-5 space-y-3 text-[13px] leading-relaxed text-muted">
+              <p>Drag a plane through a cube. Watch the slice become a hexagon.</p>
+              <p>
+                Then revolve a silhouette and watch the same structure appear from a different
+                direction. Two operations. One underlying geometry. That connection is the lesson.
+              </p>
+            </div>
             <a
               href="https://creative-lab-demos.vercel.app"
               target="_blank"
@@ -180,9 +184,15 @@ function SystemSection() {
   return (
     <section ref={ref} className={sectionClass}>
       <SectionLabel>The System</SectionLabel>
-      <p className="reveal-target mb-8 max-w-lg text-[14px] leading-relaxed text-muted">
-        Three modules. Each pairs a browser-based interactive with a printed lab guide — students manipulate the geometry first, the formula arrives as confirmation.
-      </p>
+      <div className="reveal-target mb-8 max-w-xl space-y-3 text-[14px] leading-relaxed text-muted">
+        <p>
+          Three modules covering 8.G.A.1–8.G.B.8. Each pairs a browser-based interactive with a
+          printed lab guide — students manipulate the geometry first, the formula arrives as
+          confirmation. Each shares the same interactional vocabulary: students who've been
+          through Rigid Motions already know how to be in Dilations. The consistency is part of
+          the design.
+        </p>
+      </div>
       <div className="flex flex-col gap-px border border-rule bg-rule">
         {SYSTEM_ROWS.map((row) => (
           <div
@@ -241,7 +251,7 @@ const ABOUT_ACTS = [
   },
   {
     hook: "Now I build the tools that scale that insight.",
-    body: "Real 8th graders, twice a week. When a student calls it \"sick,\" the design works. That's the validation standard — not a rubric, not a survey. Behavior.",
+    body: "Real 8th graders, twice a week. When a student calls it \"sick,\" the design works. That's the validation standard — not a rubric, not a survey. Behavior. Because agency shows up in what students do next, not in what they report afterward.",
     accentClass: 'bg-muted',
   },
 ]
@@ -325,9 +335,9 @@ function ISTESection() {
               Orlando · June 28 – July 1, 2026
             </p>
             <p className="text-[15px] leading-[1.75] text-ink">
-              I'll be at ISTE this summer showing what discovery-first, student-tested interactive
-              math looks like in practice. If you're building in this space — or just curious —
-              I'd like to talk.
+              I'll be at ISTE showing what discovery-first geometry looks like when students build
+              the proof themselves. If you're presenting on math engagement, immersive learning, or
+              innovative environments — let's find 20 minutes.
             </p>
           </div>
           <div className="text-left min-[521px]:text-right">
@@ -409,9 +419,10 @@ export default function App() {
 
       <nav
         id="site-nav"
-        className="fixed top-0 left-1/2 z-50 flex w-full max-w-[1152px] -translate-x-1/2 items-center justify-between gap-3 border-b border-rule bg-ground/92 px-8 py-4 backdrop-blur-md md:px-6"
+        className="fixed left-0 right-0 top-0 z-50 box-border w-full border-b border-rule bg-ground/45 backdrop-blur-xl backdrop-saturate-150"
       >
-        <a href="#" aria-label="Home" className="flex shrink-0 items-center gap-[10px] text-ink no-underline">
+        <div className="mx-auto flex min-w-0 w-full max-w-[1152px] items-center justify-between gap-3 px-8 py-4 md:px-6">
+          <a href="#" aria-label="Home" className="flex min-w-0 shrink-0 items-center gap-[10px] text-ink no-underline">
           <svg width="26" height="26" viewBox="0 0 100 100" fill="none" aria-hidden="true">
             <polygon points="90,50 70,84.64 30,84.64 10,50 30,15.36 70,15.36" stroke="#d4962a" strokeWidth="2.5" strokeLinejoin="round" fill="#d4962a" fillOpacity="0.07" />
             <line x1="90" y1="50" x2="10" y2="50" stroke="#d4962a" strokeWidth="0.9" opacity="0.35" />
@@ -427,19 +438,20 @@ export default function App() {
           <span className="hidden min-[521px]:inline font-display text-[15px] font-normal">
             Randall LaPoint, Jr.
           </span>
-        </a>
-        <ul className="flex list-none gap-4 min-[521px]:gap-6">
-          {(['work', 'about'] as const).map((id) => (
-            <li key={id}>
-              <a
-                href={`#${id}`}
-                className="text-[12px] uppercase tracking-wide text-muted no-underline transition-colors hover:text-amber min-[521px]:text-[13px]"
-              >
-                {id}
-              </a>
-            </li>
-          ))}
-        </ul>
+          </a>
+          <ul className="flex shrink-0 list-none gap-4 min-[521px]:gap-6">
+            {(['work', 'about'] as const).map((id) => (
+              <li key={id}>
+                <a
+                  href={`#${id}`}
+                  className="text-[12px] uppercase tracking-wide text-muted no-underline transition-colors hover:text-amber min-[521px]:text-[13px]"
+                >
+                  {id}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
       </nav>
 
       <main className="mx-auto max-w-[1152px] px-8 md:px-6">
@@ -456,15 +468,22 @@ export default function App() {
               Interactive Learning Designer
             </p>
 
-            <h1 className="mb-7 max-w-[640px] font-display text-[clamp(32px,9vw,44px)] font-light leading-[1.15] tracking-tight text-ink min-[521px]:text-[clamp(36px,6vw,58px)]">
-              I build experiences that help people understand things they{' '}
-              <em className="text-amber italic">thought were hard</em>
+            <h1 className="mb-7 max-w-[720px] font-display text-[clamp(28px,8vw,44px)] font-light leading-[1.15] tracking-tight text-ink min-[521px]:text-[clamp(32px,5.2vw,52px)]">
+              Geometry is built from operations students can{' '}
+              <em className="text-amber italic">feel</em>
+              {' '}— not formulas students must accept.
             </h1>
 
-            <p className="hero-sub mb-9 max-w-[480px] text-base leading-[1.7] text-muted">
-              Mathematician. 15 years in the classroom. Now building the tools that scale
-              what I learned about how students actually learn.
-            </p>
+            <div className="hero-sub mb-9 max-w-[520px] space-y-3 text-base leading-[1.7] text-muted">
+              <p>
+                Mathematician. 15 years in the classroom. Now building the tools that scale what I
+                learned about how students actually learn.
+              </p>
+              <p>
+                Built around the ISTE Transformational Learning Principles — Spark Curiosity,
+                Develop Expertise, and Ignite Agency aren't decorations here. They're the design spec.
+              </p>
+            </div>
 
             <div
               className="hero-proof inline-flex max-w-full items-center gap-2.5 bg-amber/12 border border-amber/50 px-4 py-2.5 text-[13px] leading-snug text-ink"
