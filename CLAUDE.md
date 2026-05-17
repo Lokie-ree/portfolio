@@ -54,7 +54,7 @@ Pre-ISTE implementation is near-final. Branch strategy: feature branches → PR 
 - Polish: hover-pause fix on Work cards, Hero lint errors resolved, System section enriched with descriptions + status dots, Pelican AI link added
 
 **Remaining:**
-- Vercel deploy (copy review is a manual human task before deploy)
+- None. Deployed at randalllapointjr.dev.
 
 ## Lint status
 
