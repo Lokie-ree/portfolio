@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 pnpm run dev       # dev server at http://localhost:5173
-pnpm run build     # tsc -b && vite build → dist/
+pnpm run build     # node scripts/gen-og.mjs && tsc -b && vite build → dist/
 pnpm run lint      # eslint .
 pnpm run preview   # preview the dist/ build
 ```
@@ -37,6 +37,8 @@ All preview components are lazy-loaded via `React.lazy` + `Suspense`. Each is em
 **Module card styling** — Cards use the `module-card` class in `index.css` (`::after` hover glow). Disabled cards pass `data-disabled="true"` to suppress the glow via a CSS attribute rule. Hover classes are conditionally applied via Tailwind template literals (not inline styles). `ModuleCard` root is always `<div>`; navigation is via inner `<a>` elements to avoid nested-anchor violations.
 
 **SystemSection** — Two-row layer stack grid (`SYSTEM_ROWS` data constant + `SystemSection` component in `App.tsx`). Outer `flex flex-col gap-px bg-rule border border-rule` with inner `gap-px bg-rule` rows — the rule color bleeds through `gap-px` to form visible cell dividers. Label column is fixed `160px`; three module columns share remaining space equally at `min-[521px]:grid-cols-[160px_1fr_1fr_1fr]`.
+
+**OG asset generation** — `scripts/gen-og.mjs` runs as part of `pnpm run build` and reads `src/assets/logo-hexagon.svg` plus the Inter font file from `node_modules`. Keep `src/assets/logo-hexagon.svg` tracked in git. If Vercel fails with `ENOENT ... /src/assets/logo-hexagon.svg`, the file is usually present locally but missing from the commit; stage and commit it before redeploying.
 
 ## Build status
 
