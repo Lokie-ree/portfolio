@@ -41,23 +41,42 @@ export function useScrollReveal<T extends HTMLElement>(stagger = 0.1) {
 
 /**
  * Animate the nav in after scrolling past the hero.
+ * Uses `top` (not `transform: translateY`) so `backdrop-filter` on the bar stays valid in Chromium.
  */
 export function useNavReveal(heroHeight: number) {
+  useLayoutEffect(() => {
+    const nav = document.getElementById('site-nav')
+    if (!nav) return
+    gsap.set(nav, { top: -72, opacity: 0, clearProps: 'transform' })
+  }, [])
+
   useEffect(() => {
     const nav = document.getElementById('site-nav')
     if (!nav) return
 
-    const ctx = gsap.context(() => {
-      gsap.set(nav, { y: -60, opacity: 0 })
-    })
-
     const trigger = ScrollTrigger.create({
       start: heroHeight,
-      onEnter: () => gsap.to(nav, { y: 0, opacity: 1, duration: 0.4, ease: 'power2.out' }),
-      onLeaveBack: () => gsap.to(nav, { y: -60, opacity: 0, duration: 0.3, ease: 'power2.in' }),
+      onEnter: () =>
+        gsap.to(nav, {
+          top: 0,
+          opacity: 1,
+          duration: 0.4,
+          ease: 'power2.out',
+          overwrite: 'auto',
+        }),
+      onLeaveBack: () =>
+        gsap.to(nav, {
+          top: -72,
+          opacity: 0,
+          duration: 0.3,
+          ease: 'power2.in',
+          overwrite: 'auto',
+        }),
     })
 
-    return () => { trigger.kill(); ctx.revert() }
+    return () => {
+      trigger.kill()
+    }
   }, [heroHeight])
 }
 

@@ -22,9 +22,11 @@ Feature-complete. All sections implemented and passing lint + build.
 ```bash
 pnpm install
 pnpm run dev        # http://localhost:5173
-pnpm run build      # production build
+pnpm run build      # generate OG assets + production build
 pnpm run lint       # eslint
 ```
+
+`pnpm run build` executes `scripts/gen-og.mjs` before TypeScript/Vite bundling. That script reads `src/assets/logo-hexagon.svg` to generate `public/og-image.png` and `public/apple-touch-icon.png`.
 
 ## Project Structure
 
@@ -58,3 +60,20 @@ Single source of truth for the color palette:
 1. Run `pnpm run build` — deploy `dist/` to Vercel
 2. Verify copy in `App.tsx` is final
 3. Confirm email address in ISTE and Contact sections
+4. Confirm `src/assets/logo-hexagon.svg` is tracked in git (`git ls-files src/assets/logo-hexagon.svg`)
+
+## Troubleshooting Vercel Build ENOENT
+
+If Vercel reports:
+
+`ENOENT: no such file or directory, open '/vercel/path0/src/assets/logo-hexagon.svg'`
+
+then the OG generation script cannot find a committed copy of the logo SVG. Fix:
+
+```bash
+git add src/assets/logo-hexagon.svg
+git commit -m "track logo asset used by OG generation"
+git push
+```
+
+Redeploy after push.
