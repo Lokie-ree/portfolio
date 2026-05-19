@@ -2,6 +2,7 @@ import { useRef, useMemo } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { tokens } from '@/tokens'
+import { usePauseSafeElapsed } from '@/hooks/usePauseSafeElapsed'
 
 const TRI_VERTS = new Float32Array([-0.5, -0.4, 0,  0.1, 0.5, 0,  0.5, -0.2, 0])
 const TRI_LOOP  = new Float32Array([-0.5, -0.4, 0,  0.1, 0.5, 0,  0.5, -0.2, 0,  -0.5, -0.4, 0])
@@ -11,10 +12,11 @@ const AXIS_PTS  = new Float32Array([0, -0.9, 0,  0, 0.9, 0])
 function Scene({ paused }: { paused: boolean }) {
   const preGroup  = useRef<THREE.Group>(null)
   const imgGroup  = useRef<THREE.Group>(null)
+  const { advance } = usePauseSafeElapsed(paused)
 
   useFrame(({ clock }) => {
+    const t = advance(clock.getElapsedTime())
     if (paused) return
-    const t = clock.getElapsedTime()
     const shift = Math.sin(t * 0.6) * 0.3
     if (preGroup.current)  preGroup.current.position.x  = -shift
     if (imgGroup.current)  imgGroup.current.position.x  =  shift

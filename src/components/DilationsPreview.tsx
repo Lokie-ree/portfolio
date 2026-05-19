@@ -2,12 +2,14 @@ import { useRef, useMemo } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { tokens } from '@/tokens'
+import { usePauseSafeElapsed } from '@/hooks/usePauseSafeElapsed'
 
 const VERTS = [-0.4, -0.35, 0,  0.1, 0.45, 0,  0.45, -0.2, 0]
 const LOOP  = new Float32Array([...VERTS, VERTS[0], VERTS[1], VERTS[2]])
 
 function Scene({ paused }: { paused: boolean }) {
   const imageGroup = useRef<THREE.Group>(null)
+  const { advance } = usePauseSafeElapsed(paused)
 
   // Ray endpoints from origin to each vertex
   const rays = useMemo(() => [
@@ -17,8 +19,8 @@ function Scene({ paused }: { paused: boolean }) {
   ], [])
 
   useFrame(({ clock }) => {
+    const t = advance(clock.getElapsedTime())
     if (paused || !imageGroup.current) return
-    const t = clock.getElapsedTime()
     const k = 1.6 + Math.sin(t * 0.7) * 0.6
     imageGroup.current.scale.setScalar(k)
   })
