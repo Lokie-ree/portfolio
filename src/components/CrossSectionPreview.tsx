@@ -2,6 +2,7 @@ import { useRef, useMemo } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { tokens } from '@/tokens'
+import { usePauseSafeElapsed } from '@/hooks/usePauseSafeElapsed'
 
 // ── Module-level constants (never recreated) ────────────────────────────────
 
@@ -70,7 +71,8 @@ function computeK(elapsed: number): { k: number; holding: boolean } {
   if (t < SWEEP_IN + HOLD + SWEEP_OUT) {
     return { k: 0.75 * easeInOutSine((t - SWEEP_IN - HOLD) / SWEEP_OUT), holding: false }
   }
-  return { k: 0.75, holding: false }
+  const u = (t - SWEEP_IN - HOLD - SWEEP_OUT) / PAUSE
+  return { k: 0.75 - 1.5 * easeInOutSine(u), holding: false }
 }
 
 // ── Intersection math ───────────────────────────────────────────────────────
@@ -185,25 +187,12 @@ function Scene({ paused }: { paused: boolean }) {
   // Vertex dots: 6 pre-allocated mesh refs
   const dotRefs = useRef<(THREE.Mesh | null)[]>(Array(6).fill(null))
 
-  // Pause-safe elapsed time: only advances when not paused
-  const manualElapsed = useRef(0)
-  const lastTime = useRef<number | null>(null)
+  const { advance } = usePauseSafeElapsed(paused)
 
   useFrame(({ clock }) => {
-    const now = clock.getElapsedTime()
-    if (!paused && groupRef.current) {
-      if (lastTime.current !== null) {
-        manualElapsed.current += now - lastTime.current
-      }
-      lastTime.current = now
-    } else {
-      // Keep lastTime updated so the first unpaused frame doesn't add stale delta
-      lastTime.current = now
-    }
+    const elapsed = advance(clock.getElapsedTime())
 
     if (paused || !groupRef.current) return
-
-    const elapsed = manualElapsed.current
 
     // Rotate entire group — intersection math stays in local space
     groupRef.current.rotation.y += 0.004
