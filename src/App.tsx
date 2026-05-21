@@ -30,32 +30,6 @@ function SectionLabel({ children }: { children: string }) {
   )
 }
 
-type SystemModule = { name: string; standard: string; href?: string }
-type SystemRow = { layerName: string; repoName: string; description: string; modules: SystemModule[] }
-
-const SYSTEM_ROWS: SystemRow[] = [
-  {
-    layerName: 'Interactive',
-    repoName: 'creative-lab',
-    description: 'Students touch the geometry. Challenge before explanation — the algebraic rule appears only after they\'ve seen why it\'s true. Conceptual understanding first, procedural fluency as confirmation.',
-    modules: [
-      { name: 'Rigid Motions',         standard: '8.G.A.1–3', href: 'https://creative-lab-five.vercel.app' },
-      { name: 'Dilations & Similarity', standard: '8.G.A.3–5', href: 'https://creative-lab-five.vercel.app' },
-      { name: 'Pythagorean Theorem',    standard: '8.G.B.7–8', href: 'https://creative-lab-five.vercel.app' },
-    ],
-  },
-  {
-    layerName: 'Lab Guide',
-    repoName: 'iste-26',
-    description: 'The reflective layer alongside the interactive — predict prompts before, sketch space during, synthesis tasks after. Students build the concept; the lab guide names what they built.',
-    modules: [
-      { name: 'Rigid Motions',         standard: '8.G.A.1–3', href: 'https://iste-26.vercel.app/#rigid-motions' },
-      { name: 'Dilations & Similarity', standard: '8.G.A.3–5', href: 'https://iste-26.vercel.app/#dilations' },
-      { name: 'Pythagorean Theorem',    standard: '8.G.B.7–8', href: 'https://iste-26.vercel.app/#pythagorean-theorem' },
-    ],
-  },
-]
-
 function WorkSection() {
   const ref = useScrollReveal<HTMLElement>()
   const proofRef = useProofBlockReveal<HTMLDivElement>()
@@ -71,6 +45,7 @@ function WorkSection() {
           standard="8.G.A.1–3 · Grade 8 Geometry"
           description="Students predict each rigid motion, watch the image land, then reconcile with what they expected — formal vocabulary for congruence arrives after the motion is something they've already done, not a list to memorize first."
           href="https://creative-lab-five.vercel.app"
+          labGuideHref="https://iste-26.vercel.app/#rigid-motions"
           preview={<RigidMotionsPreview paused={false} />}
         />
         <ModuleCard
@@ -79,6 +54,7 @@ function WorkSection() {
           standard="8.G.A.3–5 · Grade 8 Geometry"
           description="Students move from scale factor through visual argument to the AA criterion — they justify similarity from what the figures show before the textbook definition names it for them."
           href="https://creative-lab-five.vercel.app"
+          labGuideHref="https://iste-26.vercel.app/#dilations"
           preview={<DilationsPreview paused={false} />}
         />
         <ModuleCard
@@ -87,6 +63,7 @@ function WorkSection() {
           standard="8.G.B.7–8 · Grade 8 Geometry"
           description="Students build the area proof themselves — the algebraic statement only appears after they've already seen why it's true. Formula as reward, not starting point."
           href="https://creative-lab-five.vercel.app"
+          labGuideHref="https://iste-26.vercel.app/#pythagorean-theorem"
           preview={<PythagoreanTheoremPreview paused={false} />}
         />
       </div>
@@ -188,51 +165,11 @@ function SystemSection() {
       <div className="reveal-target mb-8 max-w-xl space-y-3 text-[14px] leading-relaxed text-muted">
         <p>
           Three modules covering 8.G.A.1–8.G.B.8. Each pairs a browser-based interactive with a
-          printed lab guide — students manipulate the geometry first, the formula arrives as
-          confirmation. Each shares the same interactional vocabulary: students who've been
-          through Rigid Motions already know how to be in Dilations. The consistency is part of
-          the design.
+          standards-aligned lab guide app — students manipulate the geometry first, the formula
+          arrives as confirmation. Each shares the same interactional vocabulary: students who've
+          been through Rigid Motions already know how to be in Dilations. The consistency is part
+          of the design.
         </p>
-      </div>
-      <div className="flex flex-col gap-px border border-rule bg-rule">
-        {SYSTEM_ROWS.map((row) => (
-          <div
-            key={row.layerName}
-            className="reveal-target grid grid-cols-1 gap-px bg-rule min-[521px]:grid-cols-[160px_1fr_1fr_1fr]"
-          >
-            {/* Layer label cell — amber left border anchors hierarchy */}
-            <div className="border-l-[3px] border-l-amber bg-surface px-4 py-5">
-              <p className="text-[12px] font-semibold text-amber">{row.layerName}</p>
-              <p className="mt-0.5 text-[10px] text-muted">{row.repoName}</p>
-              <p className="mt-3 text-[11px] leading-relaxed text-muted">{row.description}</p>
-            </div>
-
-            {/* Module cells */}
-            {row.modules.map((mod) => (
-              <div
-                key={mod.name}
-                className="bg-surface px-4 py-5 transition-colors duration-150 hover:bg-surface-hi"
-              >
-                <div className="mb-2 flex items-center gap-1.5">
-                  <span className={`block size-1.5 rounded-full ${mod.href ? 'bg-amber' : 'bg-rule'}`} />
-                  <span className="text-[10px] uppercase tracking-wide text-muted">{mod.href ? 'Live' : 'Draft'}</span>
-                </div>
-                <p className="text-[13px] font-normal text-ink">{mod.name}</p>
-                <p className="mt-0.5 text-[11px] text-muted">{mod.standard}</p>
-                {mod.href && (
-                  <a
-                    href={mod.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-3 inline-block text-[11px] text-amber no-underline transition-colors hover:underline"
-                  >
-                    Open →
-                  </a>
-                )}
-              </div>
-            ))}
-          </div>
-        ))}
       </div>
     </section>
   )
