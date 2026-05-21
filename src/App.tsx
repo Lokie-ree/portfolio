@@ -1,6 +1,6 @@
 import { useRef, lazy, Suspense, useState } from 'react'
 import { ModuleCard } from '@/components/ModuleCard'
-import { useScrollReveal, useNavReveal, useHeroEntrance, useProofBlockReveal, useISTEEntrance, useScrollProgress, useActBreakReveal } from '@/hooks/useScrollReveal'
+import { useScrollReveal, useNavReveal, useHeroEntrance, useProofBlockReveal, useISTEEntrance, useScrollProgress } from '@/hooks/useScrollReveal'
 import { StatStrip } from '@/components/StatStrip'
 import { CoordGridBackground } from '@/components/CoordGridBackground'
 
@@ -35,7 +35,7 @@ function WorkSection() {
   const proofRef = useProofBlockReveal<HTMLDivElement>()
   return (
     <section ref={ref} id="work" className={sectionClass}>
-      <SectionLabel>The Work — Creative Lab</SectionLabel>
+      <SectionLabel>Creative Lab</SectionLabel>
       <div
         className="reveal-target mb-10 grid grid-cols-1 gap-px border border-rule bg-rule min-[521px]:grid-cols-3"
       >
@@ -137,39 +137,6 @@ function LiveDemoSection() {
             </a>
           </div>
         </div>
-      </div>
-    </section>
-  )
-}
-
-function ActBreakSection() {
-  const ref = useActBreakReveal<HTMLDivElement>()
-  return (
-    <div ref={ref} className="py-8 text-center">
-      <p
-        className="act-break-text font-display font-light italic text-amber"
-        style={{ fontSize: 'clamp(20px, 3vw, 28px)' }}
-      >
-        Now you know what it feels like. Here&rsquo;s how it works.
-      </p>
-      <div className="act-break-rule mt-8 h-px w-10 bg-rule mx-auto" />
-    </div>
-  )
-}
-
-function SystemSection() {
-  const ref = useScrollReveal<HTMLElement>()
-  return (
-    <section ref={ref} className={sectionClass}>
-      <SectionLabel>The System</SectionLabel>
-      <div className="reveal-target mb-8 max-w-xl space-y-3 text-[14px] leading-relaxed text-muted">
-        <p>
-          Three modules covering 8.G.A.1–8.G.B.8. Each pairs a browser-based interactive with a
-          standards-aligned lab guide app — students manipulate the geometry first, the formula
-          arrives as confirmation. Each shares the same interactional vocabulary: students who've
-          been through Rigid Motions already know how to be in Dilations. The consistency is part
-          of the design.
-        </p>
       </div>
     </section>
   )
@@ -439,8 +406,6 @@ export default function App() {
 
         <LiveDemoSection />
         <WorkSection />
-        <ActBreakSection />
-        <SystemSection />
         <AboutSection />
         <PelicanSection />
         <ISTESection />
