@@ -1,6 +1,6 @@
 import { useRef, lazy, Suspense, useState } from 'react'
 import { ModuleCard } from '@/components/ModuleCard'
-import { useScrollReveal, useNavReveal, useHeroEntrance, useProofBlockReveal, useISTEEntrance, useScrollProgress, useActBreakReveal } from '@/hooks/useScrollReveal'
+import { useScrollReveal, useNavReveal, useHeroEntrance, useProofBlockReveal, useISTEEntrance, useScrollProgress } from '@/hooks/useScrollReveal'
 import { StatStrip } from '@/components/StatStrip'
 import { CoordGridBackground } from '@/components/CoordGridBackground'
 
@@ -30,38 +30,12 @@ function SectionLabel({ children }: { children: string }) {
   )
 }
 
-type SystemModule = { name: string; standard: string; href?: string }
-type SystemRow = { layerName: string; repoName: string; description: string; modules: SystemModule[] }
-
-const SYSTEM_ROWS: SystemRow[] = [
-  {
-    layerName: 'Interactive',
-    repoName: 'creative-lab',
-    description: 'Students touch the geometry. Challenge before explanation — the algebraic rule appears only after they\'ve seen why it\'s true. Conceptual understanding first, procedural fluency as confirmation.',
-    modules: [
-      { name: 'Rigid Motions',         standard: '8.G.A.1–3', href: 'https://creative-lab-five.vercel.app' },
-      { name: 'Dilations & Similarity', standard: '8.G.A.3–5', href: 'https://creative-lab-five.vercel.app' },
-      { name: 'Pythagorean Theorem',    standard: '8.G.B.7–8', href: 'https://creative-lab-five.vercel.app' },
-    ],
-  },
-  {
-    layerName: 'Lab Guide',
-    repoName: 'iste-26',
-    description: 'The reflective layer alongside the interactive — predict prompts before, sketch space during, synthesis tasks after. Students build the concept; the lab guide names what they built.',
-    modules: [
-      { name: 'Rigid Motions',         standard: '8.G.A.1–3', href: 'https://iste-26.vercel.app/#rigid-motions' },
-      { name: 'Dilations & Similarity', standard: '8.G.A.3–5', href: 'https://iste-26.vercel.app/#dilations' },
-      { name: 'Pythagorean Theorem',    standard: '8.G.B.7–8', href: 'https://iste-26.vercel.app/#pythagorean-theorem' },
-    ],
-  },
-]
-
 function WorkSection() {
   const ref = useScrollReveal<HTMLElement>()
   const proofRef = useProofBlockReveal<HTMLDivElement>()
   return (
     <section ref={ref} id="work" className={sectionClass}>
-      <SectionLabel>The Work — Creative Lab</SectionLabel>
+      <SectionLabel>Creative Lab</SectionLabel>
       <div
         className="reveal-target mb-10 grid grid-cols-1 gap-px border border-rule bg-rule min-[521px]:grid-cols-3"
       >
@@ -71,6 +45,7 @@ function WorkSection() {
           standard="8.G.A.1–3 · Grade 8 Geometry"
           description="Students predict each rigid motion, watch the image land, then reconcile with what they expected — formal vocabulary for congruence arrives after the motion is something they've already done, not a list to memorize first."
           href="https://creative-lab-five.vercel.app"
+          labGuideHref="https://iste-26.vercel.app/#rigid-motions"
           preview={<RigidMotionsPreview paused={false} />}
         />
         <ModuleCard
@@ -79,6 +54,7 @@ function WorkSection() {
           standard="8.G.A.3–5 · Grade 8 Geometry"
           description="Students move from scale factor through visual argument to the AA criterion — they justify similarity from what the figures show before the textbook definition names it for them."
           href="https://creative-lab-five.vercel.app"
+          labGuideHref="https://iste-26.vercel.app/#dilations"
           preview={<DilationsPreview paused={false} />}
         />
         <ModuleCard
@@ -87,6 +63,7 @@ function WorkSection() {
           standard="8.G.B.7–8 · Grade 8 Geometry"
           description="Students build the area proof themselves — the algebraic statement only appears after they've already seen why it's true. Formula as reward, not starting point."
           href="https://creative-lab-five.vercel.app"
+          labGuideHref="https://iste-26.vercel.app/#pythagorean-theorem"
           preview={<PythagoreanTheoremPreview paused={false} />}
         />
       </div>
@@ -136,9 +113,6 @@ function LiveDemoSection() {
 
           {/* Text pane */}
           <div className="flex flex-col justify-center border-t border-rule px-6 py-6 min-[521px]:border-l min-[521px]:border-t-0">
-            <p className="mb-2 text-[11px] font-medium uppercase tracking-wide text-amber">
-              Live — CSE
-            </p>
             <p className="mb-2 font-display text-[22px] font-normal leading-tight text-ink">
               Cross-Section Explorer
             </p>
@@ -149,8 +123,8 @@ function LiveDemoSection() {
                 direction. Two operations. One underlying geometry. That connection is the lesson.
               </p>
               <p>
-                Built as a standalone demo — the geometry that lives outside the 8.G sequence and
-                demanded its own exploration.
+                A standalone exploration of 3D-to-2D cross-sections — where intuition and formula
+                diverge most sharply, and where dual representations earn their keep.
               </p>
             </div>
             <a
@@ -163,79 +137,6 @@ function LiveDemoSection() {
             </a>
           </div>
         </div>
-      </div>
-    </section>
-  )
-}
-
-function ActBreakSection() {
-  const ref = useActBreakReveal<HTMLDivElement>()
-  return (
-    <div ref={ref} className="py-20 text-center">
-      <p
-        className="act-break-text font-display font-light italic text-amber"
-        style={{ fontSize: 'clamp(20px, 3vw, 28px)' }}
-      >
-        Now you know what it feels like. Here&rsquo;s how it works.
-      </p>
-      <div className="act-break-rule mt-8 h-px w-10 bg-rule mx-auto" />
-    </div>
-  )
-}
-
-function SystemSection() {
-  const ref = useScrollReveal<HTMLElement>()
-  return (
-    <section ref={ref} className={sectionClass}>
-      <SectionLabel>The System</SectionLabel>
-      <div className="reveal-target mb-8 max-w-xl space-y-3 text-[14px] leading-relaxed text-muted">
-        <p>
-          Three modules covering 8.G.A.1–8.G.B.8. Each pairs a browser-based interactive with a
-          printed lab guide — students manipulate the geometry first, the formula arrives as
-          confirmation. Each shares the same interactional vocabulary: students who've been
-          through Rigid Motions already know how to be in Dilations. The consistency is part of
-          the design.
-        </p>
-      </div>
-      <div className="flex flex-col gap-px border border-rule bg-rule">
-        {SYSTEM_ROWS.map((row) => (
-          <div
-            key={row.layerName}
-            className="reveal-target grid grid-cols-1 gap-px bg-rule min-[521px]:grid-cols-[160px_1fr_1fr_1fr]"
-          >
-            {/* Layer label cell — amber left border anchors hierarchy */}
-            <div className="border-l-[3px] border-l-amber bg-surface px-4 py-5">
-              <p className="text-[12px] font-semibold text-amber">{row.layerName}</p>
-              <p className="mt-0.5 text-[10px] text-muted">{row.repoName}</p>
-              <p className="mt-3 text-[11px] leading-relaxed text-muted">{row.description}</p>
-            </div>
-
-            {/* Module cells */}
-            {row.modules.map((mod) => (
-              <div
-                key={mod.name}
-                className="bg-surface px-4 py-5 transition-colors duration-150 hover:bg-surface-hi"
-              >
-                <div className="mb-2 flex items-center gap-1.5">
-                  <span className={`block size-1.5 rounded-full ${mod.href ? 'bg-amber' : 'bg-rule'}`} />
-                  <span className="text-[10px] uppercase tracking-wide text-muted">{mod.href ? 'Live' : 'Draft'}</span>
-                </div>
-                <p className="text-[13px] font-normal text-ink">{mod.name}</p>
-                <p className="mt-0.5 text-[11px] text-muted">{mod.standard}</p>
-                {mod.href && (
-                  <a
-                    href={mod.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-3 inline-block text-[11px] text-amber no-underline transition-colors hover:underline"
-                  >
-                    Open →
-                  </a>
-                )}
-              </div>
-            ))}
-          </div>
-        ))}
       </div>
     </section>
   )
@@ -255,7 +156,7 @@ const ABOUT_ACTS = [
   },
   {
     hook: "Now I build the tools that scale that insight.",
-    body: "Real 8th graders, twice a week. When a student calls it \"sick,\" the design works. That's the validation standard — not a rubric, not a survey. Behavior. Because agency shows up in what students do next, not in what they report afterward.",
+    body: "8th graders, twice a week. When a student calls it \"sick,\" the design works. That's the validation standard — not a rubric, not a survey. Behavior. Because agency shows up in what students do next, not in what they report afterward.",
     accentClass: 'bg-muted',
   },
 ]
@@ -349,7 +250,9 @@ function ISTESection() {
           <div className="text-left min-[521px]:text-right">
             {/* iste-cta class is a JS selector hook for useISTEEntrance — no CSS rules */}
             <a
-              href="mailto:rplapointjr@gmail.com"
+              href="https://calendly.com/rplapointjr/"
+              target="_blank"
+              rel="noopener noreferrer"
               className="iste-cta inline-block px-[22px] py-3 text-[13px] font-medium tracking-wide no-underline"
               style={{
                 background: 'var(--color-amber-dim)',
@@ -477,7 +380,7 @@ export default function App() {
             <h1 className="mb-7 max-w-[720px] font-display text-[clamp(28px,8vw,44px)] font-light leading-[1.15] tracking-tight text-ink min-[521px]:text-[clamp(32px,5.2vw,52px)]">
               Geometry is built from operations students can{' '}
               <em className="text-amber italic">feel</em>
-              {' '}— not formulas students must accept.
+              {' '}— not formulas students inherit.
             </h1>
 
             <div className="hero-sub mb-9 max-w-[520px] space-y-3 text-base leading-[1.7] text-muted">
@@ -495,7 +398,7 @@ export default function App() {
               className="hero-proof inline-flex max-w-full items-center gap-2.5 bg-amber/12 border border-amber/50 px-4 py-2.5 text-[13px] leading-snug text-ink"
             >
               <span className="size-[7px] shrink-0 rounded-full bg-amber" />
-              Every module is tested twice a week with real students. Their behavior shapes every
+              Every module is tested twice a week with 8th graders. Their behavior shapes every
               iteration.
             </div>
           </div>
@@ -503,8 +406,6 @@ export default function App() {
 
         <LiveDemoSection />
         <WorkSection />
-        <ActBreakSection />
-        <SystemSection />
         <AboutSection />
         <PelicanSection />
         <ISTESection />

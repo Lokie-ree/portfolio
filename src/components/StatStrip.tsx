@@ -1,26 +1,39 @@
 import { useCountUp } from '@/hooks/useCountUp'
 
-type Stat = { value: number; label: string; prefix?: string }
+type Stat =
+  | { kind: 'count'; value: number; label: string; prefix?: string }
+  | { kind: 'static'; display: string; label: string }
 
 const STATS: Stat[] = [
-  { value: 3,   label: 'Modules in the sequence' },
-  { value: 14,  label: 'Rounds in M2 alone' },
-  { value: 4,   label: 'Phases per module' },
-  { value: 150, label: 'Student sessions logged', prefix: '~' },
+  { kind: 'static', display: '8.G.A.1 → 8.G.B.8', label: 'Standards covered' },
+  { kind: 'count',  value: 36,                     label: 'Rounds across the sequence' },
+  { kind: 'count',  value: 20,                     label: 'Sessions with 8th graders' },
+  { kind: 'static', display: '2 / week',           label: 'Testing cadence' },
 ]
 
-function StatCell({ value: target, label, prefix }: Stat) {
-  const { value, ref } = useCountUp<HTMLSpanElement>(target)
+function StatCell(stat: Stat) {
+  const countStat = stat.kind === 'count' ? stat : null
+  const { value, ref } = useCountUp<HTMLSpanElement>(countStat?.value ?? 0)
+
+  const display =
+    stat.kind === 'static'
+      ? stat.display
+      : `${stat.prefix ?? ''}${value}`
+
   return (
     <div className="bg-surface px-4 py-7 flex flex-col items-center gap-[6px]">
       <span
-        ref={ref}
-        className="font-display text-[clamp(48px,8vw,64px)] font-light italic leading-none text-amber"
+        ref={stat.kind === 'count' ? ref : undefined}
+        className={`font-display font-light italic leading-none text-amber ${
+          stat.kind === 'static'
+            ? 'text-[clamp(16px,2.8vw,22px)]'
+            : 'text-[clamp(32px,6vw,52px)]'
+        }`}
       >
-        {prefix ?? ''}{value}
+        {display}
       </span>
       <span className="text-[11px] font-medium uppercase tracking-[0.12em] leading-[1.3] text-muted text-center">
-        {label}
+        {stat.label}
       </span>
     </div>
   )
