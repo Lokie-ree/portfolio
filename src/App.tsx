@@ -136,9 +136,6 @@ function LiveDemoSection() {
 
           {/* Text pane */}
           <div className="flex flex-col justify-center border-t border-rule px-6 py-6 min-[521px]:border-l min-[521px]:border-t-0">
-            <p className="mb-2 text-[11px] font-medium uppercase tracking-wide text-amber">
-              Live — CSE
-            </p>
             <p className="mb-2 font-display text-[22px] font-normal leading-tight text-ink">
               Cross-Section Explorer
             </p>
@@ -149,8 +146,8 @@ function LiveDemoSection() {
                 direction. Two operations. One underlying geometry. That connection is the lesson.
               </p>
               <p>
-                Built as a standalone demo — the geometry that lives outside the 8.G sequence and
-                demanded its own exploration.
+                A standalone exploration of 3D-to-2D cross-sections — where intuition and formula
+                diverge most sharply, and where dual representations earn their keep.
               </p>
             </div>
             <a
@@ -171,7 +168,7 @@ function LiveDemoSection() {
 function ActBreakSection() {
   const ref = useActBreakReveal<HTMLDivElement>()
   return (
-    <div ref={ref} className="py-20 text-center">
+    <div ref={ref} className="py-8 text-center">
       <p
         className="act-break-text font-display font-light italic text-amber"
         style={{ fontSize: 'clamp(20px, 3vw, 28px)' }}
@@ -255,7 +252,7 @@ const ABOUT_ACTS = [
   },
   {
     hook: "Now I build the tools that scale that insight.",
-    body: "Real 8th graders, twice a week. When a student calls it \"sick,\" the design works. That's the validation standard — not a rubric, not a survey. Behavior. Because agency shows up in what students do next, not in what they report afterward.",
+    body: "8th graders, twice a week. When a student calls it \"sick,\" the design works. That's the validation standard — not a rubric, not a survey. Behavior. Because agency shows up in what students do next, not in what they report afterward.",
     accentClass: 'bg-muted',
   },
 ]
@@ -349,7 +346,9 @@ function ISTESection() {
           <div className="text-left min-[521px]:text-right">
             {/* iste-cta class is a JS selector hook for useISTEEntrance — no CSS rules */}
             <a
-              href="mailto:rplapointjr@gmail.com"
+              href="https://calendly.com/rplapointjr/"
+              target="_blank"
+              rel="noopener noreferrer"
               className="iste-cta inline-block px-[22px] py-3 text-[13px] font-medium tracking-wide no-underline"
               style={{
                 background: 'var(--color-amber-dim)',
@@ -477,7 +476,7 @@ export default function App() {
             <h1 className="mb-7 max-w-[720px] font-display text-[clamp(28px,8vw,44px)] font-light leading-[1.15] tracking-tight text-ink min-[521px]:text-[clamp(32px,5.2vw,52px)]">
               Geometry is built from operations students can{' '}
               <em className="text-amber italic">feel</em>
-              {' '}— not formulas students must accept.
+              {' '}— not formulas students inherit.
             </h1>
 
             <div className="hero-sub mb-9 max-w-[520px] space-y-3 text-base leading-[1.7] text-muted">
@@ -495,7 +494,7 @@ export default function App() {
               className="hero-proof inline-flex max-w-full items-center gap-2.5 bg-amber/12 border border-amber/50 px-4 py-2.5 text-[13px] leading-snug text-ink"
             >
               <span className="size-[7px] shrink-0 rounded-full bg-amber" />
-              Every module is tested twice a week with real students. Their behavior shapes every
+              Every module is tested twice a week with 8th graders. Their behavior shapes every
               iteration.
             </div>
           </div>
