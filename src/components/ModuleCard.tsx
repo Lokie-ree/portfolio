@@ -27,7 +27,7 @@ export function ModuleCard({
     <div
       data-disabled={disabled ? 'true' : undefined}
       className={[
-        'module-card group relative block overflow-hidden border border-transparent bg-surface transition-[background-color,border-color] duration-150',
+        'module-card group relative flex flex-col overflow-hidden border border-transparent bg-surface transition-[background-color,border-color] duration-150',
         disabled ? 'cursor-default' : 'cursor-pointer hover:border-amber hover:bg-surface-hi',
       ].join(' ')}
       onMouseEnter={() => !disabled && setHovered(true)}
@@ -45,7 +45,7 @@ export function ModuleCard({
         )}
       </div>
 
-      <div className="relative z-10 border-t border-rule px-6 pt-5 pb-5">
+      <div className="relative z-10 flex-1 border-t border-rule px-6 pt-5 pb-5">
         <p className={`mb-2 text-[11px] font-medium uppercase tracking-wide ${disabled ? 'text-muted' : 'text-amber'}`}>
           {status}
         </p>
