@@ -37,7 +37,7 @@ function WorkSection() {
     <section ref={ref} id="work" className={sectionClass}>
       <SectionLabel>Creative Lab</SectionLabel>
       <div
-        className="reveal-target mb-10 grid grid-cols-1 gap-px border border-rule bg-rule min-[521px]:grid-cols-3"
+        className="reveal-target mb-10 flex flex-col gap-10 min-[900px]:grid min-[900px]:grid-cols-3 min-[900px]:gap-px min-[900px]:border min-[900px]:border-rule min-[900px]:bg-rule"
       >
         <ModuleCard
           status="Live"
