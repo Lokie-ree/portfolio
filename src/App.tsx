@@ -40,7 +40,7 @@ function WorkSection() {
         className="reveal-target mb-10 grid grid-cols-1 gap-px border border-rule bg-rule min-[521px]:grid-cols-3"
       >
         <ModuleCard
-          status="Live — Complete"
+          status="Live"
           title="Rigid Motions"
           standard="8.G.A.1–3 · Grade 8 Geometry"
           description="Students predict each rigid motion, watch the image land, then reconcile with what they expected — formal vocabulary for congruence arrives after the motion is something they've already done, not a list to memorize first."
@@ -49,7 +49,7 @@ function WorkSection() {
           preview={<RigidMotionsPreview paused={false} />}
         />
         <ModuleCard
-          status="Live — Complete"
+          status="Live"
           title="Dilations & Similarity"
           standard="8.G.A.3–5 · Grade 8 Geometry"
           description="Students move from scale factor through visual argument to the AA criterion — they justify similarity from what the figures show before the textbook definition names it for them."
@@ -58,7 +58,7 @@ function WorkSection() {
           preview={<DilationsPreview paused={false} />}
         />
         <ModuleCard
-          status="Live — Complete"
+          status="Live"
           title="Pythagorean Theorem"
           standard="8.G.B.7–8 · Grade 8 Geometry"
           description="Students build the area proof themselves — the algebraic statement only appears after they've already seen why it's true. Formula as reward, not starting point."
