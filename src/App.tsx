@@ -241,9 +241,7 @@ function ISTESection() {
             </p>
             <p className="text-[15px] leading-[1.75] text-ink">
               I'll be at ISTE showing what discovery-first geometry looks like when students build
-              the proof themselves. This isn't AI-readiness work. It's what makes AI-readiness
-              possible: students who've earned their own mathematical intuition before being handed
-              tools that can think alongside them. If you're presenting on math engagement,
+              the proof themselves. If you're presenting on math engagement,
               immersive learning, or innovative environments — let's find 20 minutes.
             </p>
           </div>
