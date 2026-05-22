@@ -8,7 +8,6 @@ const STATS: Stat[] = [
   { kind: 'static', display: '8.G.A.1 → 8.G.B.8', label: 'Standards covered' },
   { kind: 'count',  value: 36,                     label: 'Rounds across the sequence' },
   { kind: 'count',  value: 20,                     label: 'Sessions with 8th graders' },
-  { kind: 'static', display: '2 / week',           label: 'Testing cadence' },
 ]
 
 function StatCell(stat: Stat) {
@@ -41,7 +40,7 @@ function StatCell(stat: Stat) {
 
 export function StatStrip() {
   return (
-    <div className="reveal-target my-10 grid grid-cols-2 min-[521px]:grid-cols-4 gap-px bg-rule border border-rule">
+    <div className="reveal-target my-10 grid grid-cols-3 gap-px bg-rule border border-rule">
       {STATS.map((stat) => (
         <StatCell key={stat.label} {...stat} />
       ))}

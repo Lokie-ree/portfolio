@@ -37,10 +37,10 @@ function WorkSection() {
     <section ref={ref} id="work" className={sectionClass}>
       <SectionLabel>Creative Lab</SectionLabel>
       <div
-        className="reveal-target mb-10 grid grid-cols-1 gap-px border border-rule bg-rule min-[521px]:grid-cols-3"
+        className="reveal-target mb-10 flex flex-col gap-10 min-[900px]:grid min-[900px]:grid-cols-3 min-[900px]:gap-px min-[900px]:border min-[900px]:border-rule min-[900px]:bg-rule"
       >
         <ModuleCard
-          status="Live — Complete"
+          status="Live"
           title="Rigid Motions"
           standard="8.G.A.1–3 · Grade 8 Geometry"
           description="Students predict each rigid motion, watch the image land, then reconcile with what they expected — formal vocabulary for congruence arrives after the motion is something they've already done, not a list to memorize first."
@@ -49,7 +49,7 @@ function WorkSection() {
           preview={<RigidMotionsPreview paused={false} />}
         />
         <ModuleCard
-          status="Live — Complete"
+          status="Live"
           title="Dilations & Similarity"
           standard="8.G.A.3–5 · Grade 8 Geometry"
           description="Students move from scale factor through visual argument to the AA criterion — they justify similarity from what the figures show before the textbook definition names it for them."
@@ -58,7 +58,7 @@ function WorkSection() {
           preview={<DilationsPreview paused={false} />}
         />
         <ModuleCard
-          status="Live — Complete"
+          status="Live"
           title="Pythagorean Theorem"
           standard="8.G.B.7–8 · Grade 8 Geometry"
           description="Students build the area proof themselves — the algebraic statement only appears after they've already seen why it's true. Formula as reward, not starting point."
@@ -241,9 +241,7 @@ function ISTESection() {
             </p>
             <p className="text-[15px] leading-[1.75] text-ink">
               I'll be at ISTE showing what discovery-first geometry looks like when students build
-              the proof themselves. This isn't AI-readiness work. It's what makes AI-readiness
-              possible: students who've earned their own mathematical intuition before being handed
-              tools that can think alongside them. If you're presenting on math engagement,
+              the proof themselves. If you're presenting on math engagement,
               immersive learning, or innovative environments — let's find 20 minutes.
             </p>
           </div>
