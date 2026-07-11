@@ -60,7 +60,7 @@ function WorkSection() {
         <ModuleCard
           status="Live"
           title="Pythagorean Theorem"
-          standard="8.G.B.7–8 · Grade 8 Geometry"
+          standard="8.G.B.6–8 · Grade 8 Geometry"
           description="Students build the area proof themselves — the algebraic statement only appears after they've already seen why it's true. Formula as reward, not starting point."
           href="https://creative-lab-five.vercel.app"
           labGuideHref="https://iste-26.vercel.app/#pythagorean-theorem"
