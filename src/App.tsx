@@ -52,7 +52,7 @@ function WorkSection() {
           status="Live"
           title="Dilations & Similarity"
           standard="8.G.A.3–5 · Grade 8 Geometry"
-          description="Students move from scale factor through visual argument to the AA criterion — they justify similarity from what the figures show before the textbook definition names it for them."
+          description="Students move from scale factor through visual argument to the AA criterion — they justify similarity from what the figures show before the textbook definition names it for them. Order matters: a wrong sequence simply doesn't land, so students discover the sequence by rebuilding it themselves."
           href="https://creative-lab-five.vercel.app"
           labGuideHref="https://iste-26.vercel.app/#dilations"
           preview={<DilationsPreview paused={false} />}
